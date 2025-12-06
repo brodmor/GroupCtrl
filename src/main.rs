@@ -8,5 +8,5 @@ fn main() {
     let finder = App {
         bundle_id: "com.apple.Finder".to_string(),
     };
-    finder.open()
+    finder.open().unwrap();
 }
