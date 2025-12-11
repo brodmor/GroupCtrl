@@ -1,15 +1,9 @@
+use crate::util::capitalize;
 use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct App {
     pub bundle_id: String,
-}
-
-fn capitalize(s: &str) -> String {
-    s.chars()
-        .next()
-        .map(|c| c.to_uppercase().to_string() + &s[c.len_utf8()..])
-        .unwrap_or_default()
 }
 
 impl Display for App {

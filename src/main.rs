@@ -2,6 +2,7 @@ mod action;
 mod app;
 mod hotkeys;
 mod open;
+mod util;
 
 use crate::action::Action;
 use crate::app::App;
@@ -27,30 +28,39 @@ impl GroupCtrl {
             error: None,
         }
     }
+    fn handle_register_click(&mut self, hotkey: HotKey, app: App) {
+        let result = self
+            .hotkey_manager
+            .bind_hotkey(hotkey, Action::OpenApp(app));
+        match result {
+            Err(err) => {
+                self.error = Some(err.to_string());
+            }
+            Ok(action_option) => {
+                // this is pointless atm, for future use
+                self.error = None;
+                if let Some(action) = action_option {
+                    // TODO popup
+                    let msg = format!("Hotkey already in use for '{}'", action);
+                    self.error = Some(msg);
+                }
+            }
+        }
+    }
 }
 
 impl eframe::App for GroupCtrl {
     fn update(&mut self, ctx: &egui::Context, _frame: &mut eframe::Frame) {
         egui::CentralPanel::default().show(ctx, |ui| {
-            let button = Button::new("Register Finder hotkey");
+            let app = App::new("com.apple.finder");
+            let hotkey = HotKey::new(Some(Modifiers::SUPER | Modifiers::SHIFT), Code::KeyF);
+            ui.horizontal(|ui| {
+                ui.label(app.to_string());
+                ui.label(hotkey.to_string())
+            });
+            let button = Button::new("Register hotkey");
             if ui.add(button).clicked() {
-                let hotkey = HotKey::new(Some(Modifiers::SUPER | Modifiers::SHIFT), Code::KeyF);
-                let action = Action::OpenApp(App::new("com.apple.finder"));
-                let result = self.hotkey_manager.bind_hotkey(hotkey, action);
-                match result {
-                    Err(err) => {
-                        self.error = Some(err.to_string());
-                    }
-                    Ok(action_option) => {
-                        // this is pointless atm, for future use
-                        self.error = None;
-                        if let Some(action) = action_option {
-                            // TODO popup
-                            let msg = format!("Hotkey already in use for '{}'", action);
-                            self.error = Some(msg);
-                        }
-                    }
-                }
+                self.handle_register_click(hotkey, app);
             }
             if let Some(error) = &self.error {
                 ui.colored_label(egui::Color32::RED, format!("Error: {}", error));
