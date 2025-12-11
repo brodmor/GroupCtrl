@@ -6,20 +6,19 @@ mod open;
 use crate::action::Action;
 use crate::app::App;
 use crate::hotkeys::HotkeyManager;
-use anyhow::Error;
 use eframe::egui;
 use eframe::egui::Button;
 use global_hotkey::hotkey::{Code, HotKey, Modifiers};
 
 struct GroupCtrl {
     hotkey_manager: HotkeyManager,
-    error: Option<Error>,
+    error: Option<String>,
 }
 
 impl GroupCtrl {
     fn new() -> Self {
         Self {
-            hotkey_manager: HotkeyManager::new(),
+            hotkey_manager: HotkeyManager::new().unwrap(),
             error: None,
         }
     }
@@ -32,7 +31,21 @@ impl eframe::App for GroupCtrl {
             if ui.add(button).clicked() {
                 let hotkey = HotKey::new(Some(Modifiers::SUPER | Modifiers::SHIFT), Code::KeyF);
                 let action = Action::OpenApp(App::new("com.apple.finder"));
-                self.error = self.hotkey_manager.bind_hotkey(hotkey, action).err()
+                let result = self.hotkey_manager.bind_hotkey(hotkey, action);
+                match result {
+                    Err(err) => {
+                        self.error = Some(err.to_string());
+                    }
+                    Ok(action_option) => {
+                        // this is pointless atm, for future use
+                        self.error = None;
+                        if let Some(action) = action_option {
+                            // TODO popup
+                            let msg = format!("Hotkey already in use for '{}'", action);
+                            self.error = Some(msg);
+                        }
+                    }
+                }
             }
             if let Some(error) = &self.error {
                 ui.colored_label(egui::Color32::RED, format!("Error: {}", error));
