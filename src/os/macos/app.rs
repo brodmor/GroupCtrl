@@ -1,4 +1,4 @@
-use crate::app::AppInterface;
+use crate::os::prelude::AppTrait;
 use crate::util::capitalize;
 use std::fmt::{Display, Formatter};
 
@@ -7,13 +7,15 @@ pub struct App {
     bundle_id: String,
 }
 
-impl AppInterface for App {
+impl AppTrait for App {
     fn new(bundle_id: &str) -> Self {
-        Self { bundle_id }
+        Self {
+            bundle_id: bundle_id.to_string(),
+        }
     }
 
-    fn id(&self) -> &String {
-        self.bundle_id
+    fn id(&self) -> &str {
+        self.bundle_id.as_str()
     }
 
     fn display(&self) -> String {
@@ -22,7 +24,7 @@ impl AppInterface for App {
             .split(".")
             .last()
             .unwrap_or(self.bundle_id.as_str());
-        write!(f, "{}", capitalize(name))
+        capitalize(name)
     }
 }
 

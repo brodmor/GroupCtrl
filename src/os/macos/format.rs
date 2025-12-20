@@ -1,10 +1,10 @@
-use crate::os::interface::ModifierFormatInterface;
+use crate::os::prelude::FormatTrait;
 use global_hotkey::hotkey::Modifiers;
 
-pub struct ModifierFormat;
+pub struct Format;
 
-impl ModifierFormatInterface for ModifierFormat {
-    fn get() -> [(Modifiers, &'static str); 4] {
+impl FormatTrait for Format {
+    fn modifiers() -> [(Modifiers, &'static str); 4] {
         [
             (Modifiers::SUPER, "Cmd+"),
             (Modifiers::ALT, "Opt+"),

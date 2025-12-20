@@ -1,4 +1,5 @@
-use crate::os::{ModifierFormat, ModifierFormatInterface};
+use crate::os::Format;
+use crate::os::prelude::*;
 use global_hotkey::hotkey::{Code, HotKey as GlobalHotkey, Modifiers};
 use std::fmt::{Display, Formatter};
 
@@ -17,7 +18,7 @@ impl Hotkey {
 
 impl Display for Hotkey {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        for (modifier, text) in ModifierFormat::get() {
+        for (modifier, text) in Format::modifiers() {
             if self.0.mods.contains(modifier) {
                 write!(f, "{}", text)?;
             }

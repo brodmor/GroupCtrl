@@ -1,5 +1,4 @@
-mod interface;
-pub use interface::*;
+pub mod prelude;
 
 #[cfg(target_os = "macos")]
 mod macos;

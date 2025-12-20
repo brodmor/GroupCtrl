@@ -1,7 +1,7 @@
-use crate::os::interface::OpenInterface;
-use crate::os::windows::app::App;
+use super::app::App;
+use crate::os::prelude::Openable;
 
-impl OpenInterface for App {
+impl Openable for App {
     fn open(&self) -> anyhow::Result<()> {
         Ok(())
     }

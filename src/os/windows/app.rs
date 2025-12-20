@@ -1,4 +1,4 @@
-use crate::os::interface::AppInterface;
+use crate::os::prelude::AppTrait;
 use crate::util::capitalize;
 use std::fmt::{Display, Formatter};
 
@@ -7,7 +7,7 @@ pub struct App {
     exe_path: String,
 }
 
-impl AppInterface for App {
+impl AppTrait for App {
     fn id(&self) -> &str {
         self.exe_path.as_str()
     }

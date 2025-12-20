@@ -1,7 +1,8 @@
 use crate::action::Action::OpenApp;
 use crate::hotkeys::convert::convert_hotkey;
 use crate::hotkeys::{Hotkey, HotkeyManager};
-use crate::os::{App, AppInterface};
+use crate::os::App;
+use crate::os::prelude::*;
 use anyhow::Error;
 use global_hotkey::hotkey::Code;
 use iced::keyboard::Event;

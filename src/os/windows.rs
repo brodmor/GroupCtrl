@@ -1,6 +1,6 @@
 mod app;
-mod modifiers;
+mod format;
 mod open;
 
 pub use app::App;
-pub use modifiers::ModifierFormat;
+pub use format::Format;
