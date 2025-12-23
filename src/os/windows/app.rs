@@ -4,7 +4,7 @@ use std::fmt::{Display, Formatter};
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct App {
-    exe_path: String,
+    pub exe_path: String,
 }
 
 impl AppTrait for App {

@@ -16,6 +16,7 @@ dependencies = [
  "objc2-foundation 0.3.2",
  "serial_test",
  "simplelog",
+ "windows 0.58.0",
 ]
 
 [[package]]
