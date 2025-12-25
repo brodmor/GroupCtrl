@@ -1,11 +1,5 @@
-use std::collections::HashMap;
-use std::thread;
-
 use bimap::BiMap;
-use crossbeam::channel;
-use global_hotkey::hotkey::HotKey as GlobalHotkey;
-use global_hotkey::{GlobalHotKeyEvent, GlobalHotKeyManager};
-use log::{error, info};
+use log::info;
 
 use crate::models::action::Action;
 use crate::models::hotkey::Hotkey;
@@ -13,64 +7,17 @@ use crate::models::hotkey::Hotkey;
 // We need to store u32 because that's all we get from the keypress event
 pub type HotkeyBinding = (u32, Option<Action>);
 
-pub fn listen_for_hotkeys(binding_receiver: channel::Receiver<HotkeyBinding>) {
-    let mut hotkey_actions = HashMap::new();
-    let hotkey_receiver = GlobalHotKeyEvent::receiver();
-    loop {
-        crossbeam::select! {
-            recv(binding_receiver) -> binding => {
-                if let Ok((hotkey, action_option)) = binding {
-                    match action_option {
-                        Some(action) => { hotkey_actions.insert(hotkey, action); }
-                        None => { hotkey_actions.remove(&hotkey); }
-                    }
-                }
-            }
-            recv(hotkey_receiver) -> event_result => {
-                if let Ok(event) = event_result
-                    && event.state == global_hotkey::HotKeyState::Pressed
-                    && let Some(action) = hotkey_actions.get(&event.id)
-                {
-                    let result = action.execute();
-                    if let Err(error) = result {
-                        error!("{error}");
-                    }
-                }
-            }
-        }
-    }
-}
-
 pub struct HotkeyService {
     bindings: BiMap<Hotkey, Action>,
-    global_manager: GlobalHotKeyManager,
-    binding_sender: channel::Sender<HotkeyBinding>,
 }
 
 impl Default for HotkeyService {
     fn default() -> Self {
-        let (tx, rx) = channel::unbounded();
-        thread::spawn(move || listen_for_hotkeys(rx));
-        Self {
-            bindings: BiMap::new(),
-            global_manager: GlobalHotKeyManager::new()
-                .expect("global-hotkey manager creation failed"),
-            binding_sender: tx,
-        }
+        todo!()
     }
 }
 
 impl HotkeyService {
-    #[cfg(test)]
-    fn new_with_sender(sender: channel::Sender<HotkeyBinding>) -> anyhow::Result<Self> {
-        let global_manager = GlobalHotKeyManager::new()?;
-        Ok(Self {
-            bindings: BiMap::new(),
-            global_manager,
-            binding_sender: sender,
-        })
-    }
-
     /// Returns existing bind if hotkey is already in use
     pub fn bind_hotkey(
         &mut self,
@@ -86,10 +33,12 @@ impl HotkeyService {
             return Ok(Some(previous_action.clone()));
         }
         if let Some((previous_hotkey, _)) = self.bindings.remove_by_right(&action) {
+            // use window().remove_hotkey
             self.global_manager.unregister(previous_hotkey.0)?;
             self.binding_sender.send((previous_hotkey.id(), None))?
         }
         self.bindings.insert(hotkey, action.clone());
+        // use window().add_hotkey
         self.global_manager.register(hotkey.0)?;
         self.binding_sender.send((hotkey.id(), Some(action)))?;
         Ok(None)
@@ -97,16 +46,6 @@ impl HotkeyService {
 
     fn hotkeys(&self) -> Vec<GlobalHotkey> {
         self.bindings.left_values().map(|h| h.0).collect()
-    }
-
-    pub fn pause_hotkeys(&self) -> anyhow::Result<()> {
-        self.global_manager.unregister_all(&self.hotkeys())?;
-        Ok(())
-    }
-
-    pub fn unpause_hotkeys(&self) -> anyhow::Result<()> {
-        self.global_manager.register_all(&self.hotkeys())?;
-        Ok(())
     }
 }
 

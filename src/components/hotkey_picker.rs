@@ -1,73 +1,63 @@
+use dioxus::prelude::*;
 use global_hotkey::hotkey::Code;
-use iced::keyboard::Event;
-use iced::widget::{Button, button, text};
-use iced::{color, keyboard};
 
-use crate::models::action::Action;
 use crate::models::hotkey::Hotkey;
-use crate::services::hotkey::HotkeyService;
 use crate::util::convert::convert_hotkey;
 
-#[derive(Default)]
-pub struct HotkeyPicker {
-    recording: bool,
-    picked: Option<Hotkey>,
-    error: Option<anyhow::Error>,
-}
+#[component]
+pub fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element {
+    let mut recording = use_context::<Signal<bool>>();
 
-#[derive(Clone, Debug)]
-pub enum Message {
-    StartRecording,
-    KeyRecorded(Hotkey),
-}
+    let start_recording = move |_| {
+        recording.set(true);
+    };
 
-impl HotkeyPicker {
-    pub fn update(&mut self, message: Message, hotkey_service: &mut HotkeyService, action: Action) {
-        match message {
-            Message::StartRecording => {
-                self.recording = true;
-                self.error = hotkey_service.pause_hotkeys().err();
+    let handle_keydown = move |evt: KeyboardEvent| {
+        if !recording() {
+            return;
+        }
+
+        if let Some(hotkey) = convert_hotkey(&evt) {
+            // Only stop recording when we successfully capture a non-modifier key
+            recording.set(false);
+            log::info!("Captured hotkey: {}", hotkey);
+
+            // Escape clears the hotkey
+            if hotkey.0.key == Code::Escape {
+                picked_hotkey.set(None);
+            } else {
+                picked_hotkey.set(Some(hotkey));
             }
-            Message::KeyRecorded(hotkey) => {
-                if self.recording {
-                    self.recording = false;
-                    self.error = hotkey_service.unpause_hotkeys().err();
-                    if self.error.is_some() {
-                        return;
-                    }
-                    if hotkey.0.key == Code::Escape {
-                        self.picked = None;
-                        return;
-                    }
-                    self.picked = Some(hotkey);
-                    self.error = hotkey_service.bind_hotkey(hotkey, action).err();
-                }
+        } else {
+            // Modifier-only keys are filtered - keep recording
+            log::debug!("Ignoring modifier key: {}", evt.code());
+        }
+    };
+
+    let label = if recording() {
+        "Recording...".to_string()
+    } else {
+        match picked_hotkey() {
+            None => "None".to_string(),
+            Some(key) => key.to_string(),
+        }
+    };
+
+    let label_color = if picked_hotkey().is_none() {
+        "#888888"
+    } else {
+        "black"
+    };
+
+    rsx! {
+        div {
+            onkeydown: handle_keydown,
+            tabindex: 0,
+            button {
+                onclick: start_recording,
+                style: "color: {label_color};",
+                "{label}"
             }
         }
-    }
-
-    pub fn view(&self) -> Button<'_, Message> {
-        let label = if let Some(err) = &self.error {
-            text(format!("Error: {}", err)).color(color!(0xff0000))
-        } else if self.recording {
-            text("Recording...")
-        } else {
-            match self.picked {
-                None => text("None").color(color!(0x888888)),
-                Some(key) => text(key.to_string()),
-            }
-        };
-        button(label).on_press(Message::StartRecording)
-    }
-
-    pub fn subscription(&self) -> iced::Subscription<Message> {
-        keyboard::listen().filter_map(|event| match event {
-            Event::KeyPressed {
-                modifiers,
-                physical_key,
-                ..
-            } => convert_hotkey(modifiers, physical_key).map(Message::KeyRecorded),
-            _ => None,
-        })
     }
 }
