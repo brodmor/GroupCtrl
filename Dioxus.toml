@@ -1,0 +1,3 @@
+[application]
+name = "GroupCtrl"
+default_platform = "desktop"

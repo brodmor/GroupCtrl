@@ -17,15 +17,15 @@ pub(super) fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element
 
     let label = if recording() {
         rsx! {
-            span { style: "color: black", "Recording..." }
+            span { class: "text-black", "Recording..." }
         }
     } else {
         match picked_hotkey() {
             None => rsx! {
-                span { style: "color: gray", "None" }
+                span { class: "text-gray-500", "None" }
             },
             Some(key) => rsx! {
-                span { style: "color: black", "{key}" }
+                span { class: "text-black", "{key}" }
             },
         }
     };

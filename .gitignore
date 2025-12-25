@@ -1,5 +1,8 @@
-/target
-.idea
 .DS_Store
-/logs
-/.claude
+.idea
+.claude
+
+target/
+node_modules/
+logs/
+dx_log.txt

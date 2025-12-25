@@ -19,7 +19,7 @@ pub(super) fn AppSelector(mut selected_app: Signal<Option<App>>) -> Element {
 
     rsx! {
         div {
-            style: "display: flex; gap: 10px; align-items: center;",
+            class: "flex gap-2 items-center",
             span { "{app_display}" }
             button {
                 onclick: pick_app,

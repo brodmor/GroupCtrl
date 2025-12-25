@@ -23,7 +23,8 @@ pub fn Root() -> Element {
 
     rsx! {
         div {
-            style: "display: flex; gap: 10px; padding: 20px;",
+            class: "flex gap-4 p-6 items-center justify-center h-screen",
+            style { "{include_str!(\"../../target/tailwind.css\")}" }
             HotkeyPicker { picked_hotkey }
             AppSelector { selected_app }
         }

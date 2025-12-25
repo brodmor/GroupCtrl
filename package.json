@@ -1,0 +1,10 @@
+{
+  "name": "groupctrl",
+  "scripts": {
+    "watch": "tailwindcss -i ./input.css -o ./target/tailwind.css --watch",
+    "build": "tailwindcss -i ./input.css -o ./target/tailwind.css --minify"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.0.0"
+  }
+}
