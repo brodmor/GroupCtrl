@@ -1,10 +1,7 @@
-use std::sync::Arc;
-
 use dioxus::prelude::*;
-use futures_util::stream::StreamExt;
 
+use crate::hooks::use_record_registered;
 use crate::models::Hotkey;
-use crate::services::{RecordRegistered, RecordRegisteredFn};
 
 fn is_modifier(code: &Code) -> bool {
     let code_str = code.to_string();
@@ -17,6 +14,7 @@ fn is_modifier(code: &Code) -> bool {
 #[component]
 pub fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element {
     let mut recording = use_signal(|| false);
+    use_record_registered(recording, picked_hotkey);
 
     let start_recording = move |_| {
         recording.set(true);
@@ -35,29 +33,6 @@ pub fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element {
         })
     };
 
-    // Need this to handle hotkeys that are already globally registered
-    // Nice side effect: Collisions can only occur in this scenario
-    let record_registered = use_context::<RecordRegistered>();
-    let hotkey_coroutine = use_coroutine(move |mut rx: UnboundedReceiver<Hotkey>| async move {
-        while let Some(hotkey) = rx.next().await {
-            recording.set(false);
-            picked_hotkey.set(Some(hotkey));
-        }
-    });
-
-    use_effect(move || {
-        let callback = if recording() {
-            let tx = hotkey_coroutine.tx();
-            let cb: RecordRegisteredFn = Arc::new(move |hotkey: Hotkey| {
-                let _ = tx.unbounded_send(hotkey);
-            });
-            Some(cb)
-        } else {
-            None
-        };
-        record_registered.set(callback);
-    });
-
     let label = if recording() {
         "Recording...".to_string()
     } else {
@@ -66,9 +41,7 @@ pub fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element {
             Some(key) => key.to_string(),
         }
     };
-
     let label_color = if label == "None" { "gray" } else { "black" };
-
     rsx! {
         div {
             onkeydown: handle_keydown,
