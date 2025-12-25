@@ -18,7 +18,7 @@ impl AppSelection for AppDialog {
             return Ok(None);
         };
         let bundle_id = get_bundle_id(app_path.path())?;
-        Ok(Some(App::new(&bundle_id)))
+        Ok(Some(App { bundle_id }))
     }
 }
 

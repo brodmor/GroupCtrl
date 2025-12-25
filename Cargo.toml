@@ -12,7 +12,6 @@ dioxus = { version = "0.7.2", features = ["desktop"] }
 rfd = "0.16.0"
 plist = "1.8.0"
 bimap = "0.6.3"
-crossbeam = "0.8.4"
 futures-util = "0.3.31"
 
 [target.'cfg(target_os = "macos")'.dependencies]

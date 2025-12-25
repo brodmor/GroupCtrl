@@ -10,7 +10,7 @@ pub struct HotkeyService<B: HotkeyBinder = DioxusBinder> {
     binder: B,
 }
 
-impl HotkeyService<DioxusBinder> {
+impl HotkeyService {
     pub fn new(record_registered: RecordRegistered) -> Self {
         Self {
             bindings: BiMap::new(),
@@ -51,7 +51,6 @@ mod tests {
     use serial_test::serial;
 
     use super::*;
-    use crate::os::App;
     use crate::services::hotkey::binder::tests::MockBinder;
     use crate::services::hotkey::binder::tests::MockEvent::*;
 

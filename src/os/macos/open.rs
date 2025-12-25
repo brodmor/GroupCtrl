@@ -41,14 +41,19 @@ mod tests {
     #[test]
     fn open_finder() {
         let initial_app = get_current_app();
+        let app = App {
+            bundle_id: "com.apple.finder".to_string(),
+        };
         // This only means the command was received, but should be fine
-        assert!(App::new("com.apple.finder").open().is_ok());
+        assert!(app.open().is_ok());
         initial_app.open().unwrap(); // restore focus
     }
 
     #[test]
     fn open_fake_app() {
-        let fake_app = App::new("test.fake.app");
+        let fake_app = App {
+            bundle_id: "com.test.fake".to_string(),
+        };
         assert!(fake_app.open().is_err());
     }
 }

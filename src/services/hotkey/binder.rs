@@ -18,7 +18,7 @@ pub struct DioxusBinder {
 }
 
 impl DioxusBinder {
-    pub fn new(registered_record: RecordRegistered) -> Self {
+    pub(super) fn new(registered_record: RecordRegistered) -> Self {
         Self {
             registered_record,
             handles: HashMap::new(),
