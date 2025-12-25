@@ -8,7 +8,7 @@ use crate::services::{RecordRegistered, RecordRegisteredFn};
 
 /// Handles hotkeys that are already globally registered
 /// Nice side effect: Collisions can only occur in this scenario
-pub fn use_record_registered(
+pub(super) fn use_record_registered(
     mut recording: Signal<bool>,
     mut picked_hotkey: Signal<Option<Hotkey>>,
 ) {

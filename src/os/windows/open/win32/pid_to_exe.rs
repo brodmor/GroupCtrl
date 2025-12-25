@@ -8,7 +8,7 @@ use super::api as win32;
 
 static EXE_CACHE: LazyLock<Mutex<HashMap<u32, String>>> = LazyLock::new(Default::default);
 
-pub fn pid_to_exe(process_id: u32) -> windows::core::Result<String> {
+pub(super) fn pid_to_exe(process_id: u32) -> windows::core::Result<String> {
     Ok(match EXE_CACHE.lock().unwrap().entry(process_id) {
         Occupied(e) => e.into_mut().clone(),
         Vacant(e) => e.insert(lookup_process_exe_path(process_id)?).clone(),

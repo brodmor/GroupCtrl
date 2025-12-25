@@ -8,7 +8,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(bundle_id: &str) -> Self {
+    pub(super) fn new(bundle_id: &str) -> Self {
         Self {
             bundle_id: bundle_id.to_string(),
         }

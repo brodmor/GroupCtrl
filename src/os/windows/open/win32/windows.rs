@@ -14,7 +14,7 @@ fn is_main_window(window: win32::HWND) -> bool {
     }
 }
 
-pub fn collect_main_windows() -> windows::core::Result<Vec<win32::HWND>> {
+pub(super) fn collect_main_windows() -> windows::core::Result<Vec<win32::HWND>> {
     extern "system" fn collect_window_callback(
         window: win32::HWND,
         lparam: win32::LPARAM,
@@ -35,7 +35,7 @@ pub fn collect_main_windows() -> windows::core::Result<Vec<win32::HWND>> {
     Ok(windows)
 }
 
-pub fn find_matching_window(
+pub(super) fn find_matching_window(
     windows: &[win32::HWND],
     target_exe: &str,
 ) -> windows::core::Result<Option<win32::HWND>> {

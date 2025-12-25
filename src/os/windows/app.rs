@@ -9,7 +9,7 @@ pub struct App {
 }
 
 impl App {
-    pub fn new(exe_path: &str) -> Self {
+    pub(super) fn new(exe_path: &str) -> Self {
         Self {
             exe_path: exe_path.to_string(),
         }

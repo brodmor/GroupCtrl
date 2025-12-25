@@ -56,7 +56,7 @@ mod tests {
     use crate::services::hotkey::binder::tests::MockEvent::*;
 
     impl HotkeyService<MockBinder> {
-        pub fn new_mock(binder: MockBinder) -> Self {
+        fn new_mock(binder: MockBinder) -> Self {
             Self {
                 bindings: BiMap::new(),
                 binder,
@@ -74,7 +74,7 @@ mod tests {
         };
         let mut service = HotkeyService::new_mock(binder);
         let hotkey = Hotkey::new(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyF);
-        let action = Action::OpenApp(App::new("some-app"));
+        let action = Action::Mock("Test");
 
         // Act
         let result = service.bind_hotkey(hotkey, action.clone()).unwrap();
@@ -94,7 +94,7 @@ mod tests {
         };
         let mut service = HotkeyService::new_mock(binder);
         let hotkey = Hotkey::new(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyF);
-        let action = Action::OpenApp(App::new("some-app"));
+        let action = Action::Mock("Test");
 
         // Act
         service.bind_hotkey(hotkey, action.clone()).unwrap();
@@ -115,8 +115,8 @@ mod tests {
         };
         let mut service = HotkeyService::new_mock(binder);
         let hotkey = Hotkey::new(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyF);
-        let old_action = Action::OpenApp(App::new("some-app"));
-        let new_action = Action::OpenApp(App::new("some-other-app"));
+        let old_action = Action::Mock("Old");
+        let new_action = Action::Mock("New");
 
         // Act
         service.bind_hotkey(hotkey, old_action.clone()).unwrap();
@@ -138,7 +138,7 @@ mod tests {
         let mut service = HotkeyService::new_mock(binder);
         let old_hotkey = Hotkey::new(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyF);
         let new_hotkey = Hotkey::new(Modifiers::SUPER | Modifiers::SHIFT, Code::KeyG);
-        let action = Action::OpenApp(App::new("some-app"));
+        let action = Action::Mock("Test");
 
         // Act
         service.bind_hotkey(old_hotkey, action.clone()).unwrap();

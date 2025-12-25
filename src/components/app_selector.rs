@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 use crate::os::{App, AppDialog, AppSelection};
 
 #[component]
-pub fn AppSelector(mut selected_app: Signal<Option<App>>) -> Element {
+pub(super) fn AppSelector(mut selected_app: Signal<Option<App>>) -> Element {
     let pick_app = move |_| {
         spawn(async move {
             if let Ok(Some(app)) = AppDialog::select_app().await {

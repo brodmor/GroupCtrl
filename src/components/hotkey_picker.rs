@@ -12,7 +12,7 @@ fn is_modifier(code: &Code) -> bool {
 }
 
 #[component]
-pub fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element {
+pub(super) fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element {
     let mut recording = use_signal(|| false);
     use_record_registered(recording, picked_hotkey);
 
