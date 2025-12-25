@@ -22,6 +22,7 @@ pub(super) fn AppSelector(mut selected_app: Signal<Option<App>>) -> Element {
             class: "flex gap-2 items-center",
             span { "{app_display}" }
             button {
+                class: "btn btn-primary",
                 onclick: pick_app,
                 "Pick App"
             }

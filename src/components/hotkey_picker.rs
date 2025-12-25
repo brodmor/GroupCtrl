@@ -17,15 +17,15 @@ pub(super) fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element
 
     let label = if recording() {
         rsx! {
-            span { class: "text-black", "Recording..." }
+            span { class: "text-base-content", "Recording..." }
         }
     } else {
         match picked_hotkey() {
             None => rsx! {
-                span { class: "text-gray-500", "None" }
+                span { class: "opacity-50", "None" }
             },
             Some(key) => rsx! {
-                span { class: "text-black", "{key}" }
+                span { class: "text-base-content", "{key}" }
             },
         }
     };
@@ -34,6 +34,7 @@ pub(super) fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element
             onkeydown: record_unregistered, // globally registered keys never make it here
             tabindex: 0,
             button {
+                class: "btn btn-outline",
                 onclick: move |_| recording.set(true),
                 {label}
             }
