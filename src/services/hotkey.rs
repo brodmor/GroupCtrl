@@ -40,7 +40,7 @@ impl<B: HotkeyBinder> HotkeyService<B> {
             return Ok(Some(previous_action.clone()));
         }
         if let Some((previous_hotkey, _)) = self.bindings.remove_by_right(&action) {
-            self.binder.remove_shortcut(previous_hotkey)?;
+            self.binder.remove_shortcut(previous_hotkey);
         }
         self.binder.create_shortcut(hotkey, &action)?;
         self.bindings.insert(hotkey, action);

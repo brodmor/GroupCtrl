@@ -11,8 +11,7 @@ use crate::models::hotkey::Hotkey;
 
 pub trait HotkeyBinder {
     fn create_shortcut(&mut self, hotkey: Hotkey, action: &Action) -> anyhow::Result<()>;
-
-    fn remove_shortcut(&mut self, hotkey: Hotkey) -> anyhow::Result<()>;
+    fn remove_shortcut(&mut self, hotkey: Hotkey);
 }
 
 pub struct DioxusBinder {
@@ -40,16 +39,15 @@ impl HotkeyBinder for DioxusBinder {
         };
         let handle = window()
             .create_shortcut(hotkey.0, callback)
+            // manual error mapping because this error doesn't implement Display
             .map_err(|e| anyhow!("Failed to create shortcut: {:?}", e))?;
         self.handles.insert(hotkey, handle);
         Ok(())
     }
 
-    fn remove_shortcut(&mut self, hotkey: Hotkey) -> anyhow::Result<()> {
-        if let Some(handle) = self.handles.remove(&hotkey) {
-            window().remove_shortcut(handle);
-        }
-        Ok(())
+    fn remove_shortcut(&mut self, hotkey: Hotkey) {
+        let handle = self.handles.remove(&hotkey).unwrap();
+        window().remove_shortcut(handle);
     }
 }
 
@@ -77,10 +75,9 @@ pub mod tests {
             Ok(())
         }
 
-        fn remove_shortcut(&mut self, hotkey: Hotkey) -> anyhow::Result<()> {
+        fn remove_shortcut(&mut self, hotkey: Hotkey) {
             let mut events = self.events.lock().unwrap();
             events.push(MockEvent::Unregister(hotkey));
-            Ok(())
         }
     }
 }
