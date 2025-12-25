@@ -10,8 +10,7 @@ use crate::services::{HotkeyService, SharedHotkeyCallback};
 pub fn Root() -> Element {
     let record_registered = use_hook(SharedHotkeyCallback::default);
     let mut hotkey_service = use_signal(|| HotkeyService::new(record_registered.clone()));
-    use_context_provider(|| record_registered);
-    use_context_provider(|| hotkey_service);
+    use_context_provider(|| record_registered); // provide to hotkey pickers
 
     let picked_hotkey = use_signal(|| None::<Hotkey>);
     let selected_app = use_signal(|| None::<App>);

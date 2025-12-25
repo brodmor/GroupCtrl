@@ -28,12 +28,12 @@ impl DioxusBinder {
 
 impl HotkeyBinder for DioxusBinder {
     fn bind_hotkey(&mut self, hotkey: Hotkey, action: &Action) -> anyhow::Result<()> {
-        let my_action = action.clone();
         let my_record = self.record_registered.clone();
+        let my_action = action.clone();
         let callback = move |state| {
             if state == Pressed {
-                if let Some(active_record) = my_record.get() {
-                    active_record(hotkey);
+                if let Some(active_record_registered) = my_record.get() {
+                    active_record_registered(hotkey);
                 } else {
                     let _ = my_action.execute();
                 }

@@ -5,36 +5,37 @@ use futures_util::StreamExt;
 
 use crate::models::Hotkey;
 use crate::services::{HotkeyCallback, SharedHotkeyCallback};
+use crate::util::is_modifier;
 
 #[component]
 pub(super) fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element {
     let mut recording = use_signal(|| false);
-    let start_recording = move |_| {
-        recording.set(true);
-    };
-
     let record_unregistered = move |evt: KeyboardEvent| {
         record_unregistered(recording, picked_hotkey, evt);
     };
     use_record_registered(recording, picked_hotkey);
 
     let label = if recording() {
-        "Recording...".to_string()
+        rsx! {
+            span { style: "color: black", "Recording..." }
+        }
     } else {
         match picked_hotkey() {
-            None => "None".to_string(),
-            Some(key) => key.to_string(),
+            None => rsx! {
+                span { style: "color: gray", "None" }
+            },
+            Some(key) => rsx! {
+                span { style: "color: black", "{key}" }
+            },
         }
     };
-    let label_color = if label == "None" { "gray" } else { "black" };
     rsx! {
         div {
             onkeydown: record_unregistered, // globally registered keys never make it here
             tabindex: 0,
             button {
-                onclick: start_recording,
-                style: "color: {label_color};",
-                "{label}"
+                onclick: move |_| recording.set(true),
+                {label}
             }
         }
     }
@@ -45,14 +46,6 @@ fn record_unregistered(
     mut picked_hotkey: Signal<Option<Hotkey>>,
     evt: KeyboardEvent,
 ) {
-    fn is_modifier(code: &Code) -> bool {
-        let code_str = code.to_string();
-        code_str.contains("Control")
-            || code_str.contains("Meta")
-            || code_str.contains("Alt")
-            || code_str.contains("Shift")
-    }
-
     let code = evt.code();
     if !recording() || is_modifier(&code) {
         return;
@@ -66,26 +59,21 @@ fn record_unregistered(
 }
 
 fn use_record_registered(mut recording: Signal<bool>, mut picked_hotkey: Signal<Option<Hotkey>>) {
-    let shared_record_callback = use_context::<SharedHotkeyCallback>();
-    let record_coroutine =
-        use_coroutine(move |mut receiver: UnboundedReceiver<Hotkey>| async move {
-            while let Some(hotkey) = receiver.next().await {
-                recording.set(false);
-                picked_hotkey.set(Some(hotkey));
-            }
-        });
-    // This is called by the OS thread and therefore can't manipulate UI
-    // Thus we need to send UI updates to a coroutine
+    let listener = use_coroutine(move |mut receiver: UnboundedReceiver<Hotkey>| async move {
+        while let Some(hotkey) = receiver.next().await {
+            recording.set(false);
+            picked_hotkey.set(Some(hotkey));
+        }
+    });
+    let record_registered = use_context::<SharedHotkeyCallback>();
     use_effect(move || {
-        let record_callback = if recording() {
-            let sender = record_coroutine.tx();
-            let send_to_coroutine: HotkeyCallback = Arc::new(move |hotkey: Hotkey| {
-                let _ = sender.unbounded_send(hotkey);
-            });
-            Some(send_to_coroutine)
-        } else {
+        record_registered.set(if !recording() {
             None
-        };
-        shared_record_callback.set(record_callback);
+        } else {
+            let listener_sender = listener.tx();
+            Some(Arc::new(move |hotkey: Hotkey| {
+                let _ = listener_sender.unbounded_send(hotkey);
+            }) as HotkeyCallback)
+        });
     });
 }
