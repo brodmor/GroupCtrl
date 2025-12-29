@@ -13,14 +13,9 @@ where
     E: ListCell<I> + Clone + PartialEq + 'static,
 {
     rsx! {
-        div {
-            ul {
-                class: "menu",
-                for element in elements {
-                    Cell { element, selected }
-                }
-            }
-            ListMenu { selected }
+        ListMenu { selected }
+        for element in elements {
+            Cell { element, selected }
         }
     }
 }
@@ -42,14 +37,14 @@ where
     };
     rsx! {
         div {
-            class: "flex gap-2",
+            class: "flex",
             button {
-                class: "btn btn-outline",
+                class: "btn btn-xs",
                 onclick: add,
                 "Add"
             }
             button {
-                class: "btn btn-outline",
+                class: "btn btn-xs",
                 onclick: remove,
                 "Remove"
             }
@@ -80,8 +75,12 @@ where
         }
     };
     rsx! {
-        li {
-            class: if is_selected { "menu-active" } else { "" },
+        button {
+            // TODO maybe daisy join buttons for styling
+           class: format_args!(
+                "btn btn-sm w-full justify-start {}",
+                if is_selected { "btn-active" } else { "btn-ghost" }
+            ),
             onclick: toggle_active,
             { element.render() }
         }
