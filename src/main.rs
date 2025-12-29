@@ -4,7 +4,7 @@ mod os;
 mod services;
 mod util;
 
-use dioxus::desktop::{Config, WindowBuilder};
+use dioxus::desktop::{Config, LogicalSize, WindowBuilder};
 use simplelog::*;
 
 use crate::components::Root;
@@ -39,6 +39,7 @@ fn main() {
             Config::new().with_window(
                 WindowBuilder::new()
                     .with_title("GroupCtrl")
+                    .with_inner_size(LogicalSize::new(400, 300))
                     .with_always_on_top(false),
             ),
         )
