@@ -1,11 +1,17 @@
 use std::fmt::{Display, Formatter};
 
-use crate::os::AppTrait;
+use crate::models::Identifiable;
 use crate::util::capitalize;
 
 #[derive(Debug, Clone, Hash, PartialEq, Eq)]
 pub struct App {
     pub(super) exe_path: String,
+}
+
+impl Identifiable<String> for App {
+    fn id(&self) -> String {
+        self.exe_path.clone()
+    }
 }
 
 impl App {

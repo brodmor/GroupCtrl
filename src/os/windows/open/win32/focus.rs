@@ -3,7 +3,7 @@ use anyhow::bail;
 use super::api as win32;
 use super::windows::{collect_main_windows, find_matching_window};
 
-pub(super) fn focus(exe_path: &str) -> anyhow::Result<bool> {
+pub fn focus(exe_path: &str) -> anyhow::Result<bool> {
     let main_windows = collect_main_windows()?;
     let result = find_matching_window(&main_windows, exe_path)?;
     if let Some(window) = result {
