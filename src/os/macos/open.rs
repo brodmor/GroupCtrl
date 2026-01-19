@@ -25,28 +25,19 @@ impl Openable for App {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    fn get_current_app() -> App {
-        let workspace = NSWorkspace::sharedWorkspace();
-        let focused_app = workspace
-            .frontmostApplication()
-            .expect("Could not find current app");
-        let bundle_id = focused_app
-            .bundleIdentifier()
-            .expect("Could not find bundle id for current app")
-            .to_string();
-        App { bundle_id }
-    }
+    use crate::os::{AppQuery, System};
 
     #[test]
     fn open_finder() {
-        let initial_app = get_current_app();
+        let initial_app = System::current_app();
         let app = App {
             bundle_id: "com.apple.finder".to_string(),
         };
         // This only means the command was received, but should be fine
         assert!(app.open().is_ok());
-        initial_app.open().unwrap(); // restore focus
+        if let Ok(Some(restore)) = initial_app {
+            restore.open().unwrap();
+        }
     }
 
     #[test]

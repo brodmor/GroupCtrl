@@ -7,6 +7,10 @@ pub trait KeyboardBehavior {
     fn is_multi_select(modifiers: Modifiers) -> bool;
 }
 
+pub trait AppQuery {
+    fn current_app() -> anyhow::Result<Option<App>>;
+}
+
 pub trait AppSelection {
     async fn select_app() -> anyhow::Result<Option<App>>;
 }

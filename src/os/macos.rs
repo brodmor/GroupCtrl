@@ -1,4 +1,5 @@
 mod app;
+mod app_query;
 mod app_selection;
 mod keyboard;
 mod open;
