@@ -5,6 +5,7 @@ mod services;
 mod util;
 
 use dioxus::desktop::{Config, LogicalSize, WindowBuilder};
+use dioxus::prelude::*;
 use simplelog::*;
 
 use crate::components::Root;
@@ -34,14 +35,29 @@ fn main() {
         std::process::exit(1);
     }));
 
-    dioxus::LaunchBuilder::desktop()
+    #[cfg(target_os = "macos")]
+    let head = format!(
+        r#"<link rel="stylesheet" href="{}">"#,
+        asset!("/assets/tailwind.css")
+    );
+    #[cfg(target_os = "windows")]
+    let head = format!(
+        r#"<style>{}</style>"#,
+        include_str!("../assets/tailwind.css")
+    );
+
+    LaunchBuilder::desktop()
         .with_cfg(
-            Config::new().with_window(
-                WindowBuilder::new()
-                    .with_title("GroupCtrl")
-                    .with_inner_size(LogicalSize::new(400, 300))
-                    .with_always_on_top(false),
-            ),
+            Config::new()
+                .with_window(
+                    WindowBuilder::new()
+                        .with_transparent(true)
+                        .with_decorations(false)
+                        .with_always_on_top(false)
+                        .with_inner_size(LogicalSize::new(400, 300))
+                        .with_title("GroupCtrl"),
+                )
+                .with_custom_head(head),
         )
         .launch(Root);
 }

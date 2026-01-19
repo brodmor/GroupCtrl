@@ -1,5 +1,6 @@
 use std::collections::HashSet;
 
+use dioxus::desktop::window;
 use dioxus::prelude::*;
 use futures_util::StreamExt;
 use uuid::Uuid;
@@ -20,6 +21,8 @@ pub fn Root() -> Element {
     use_context_provider(|| registered_record_sender);
     use_context_provider(|| action_sender);
 
+    use_effect(move || window().set_decorations(true));
+
     let selected = use_signal(HashSet::<Uuid>::new);
     use_group_list_listener(config_service, selected);
     let active_group = use_memo(move || {
@@ -31,8 +34,8 @@ pub fn Root() -> Element {
     });
 
     rsx! {
-        { render_stylesheet() }
         div {
+            "data-theme": "dim",
             class: "flex h-screen",
             aside {
                 class: "flex-1 p-2 border-r",
@@ -52,22 +55,6 @@ pub fn Root() -> Element {
                 }
             }
         }
-    }
-}
-
-// On macOS, use asset! for hot reload support
-#[cfg(target_os = "macos")]
-fn render_stylesheet() -> Element {
-    rsx! {
-        document::Stylesheet { href: asset!("/assets/tailwind.css") }
-    }
-}
-
-// On Windows, use include_str! as a workaround for asset! loading issues
-#[cfg(target_os = "windows")]
-fn render_stylesheet() -> Element {
-    rsx! {
-        style { {include_str!("../../assets/tailwind.css")} }
     }
 }
 
