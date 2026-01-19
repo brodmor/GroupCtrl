@@ -38,10 +38,10 @@ where
             }
             button {
                 class: "btn btn-xs",
+                disabled: selected().is_empty(),
                 onclick: remove,
                 "Remove"
             }
-
         }
     }
 }
