@@ -30,13 +30,12 @@ pub fn HotkeyPicker(mut picked_hotkey: Signal<Option<Hotkey>>) -> Element {
     };
     rsx! {
         div {
-            onkeydown: record_unregistered, // globally registered keys never make it here
+            role: "button",
+            class: "btn btn-sm btn-outline w-fit outline-none",
             tabindex: 0,
-            button {
-                class: "btn btn-sm btn-outline",
-                onclick: move |_| recording.set(true),
-                { label }
-            }
+            onkeydown: record_unregistered, // globally registered keys never make it here
+            onclick: move |_| recording.set(true),
+            { label }
         }
     }
 }
@@ -47,9 +46,13 @@ fn record_unregistered(
     evt: KeyboardEvent,
 ) {
     let code = evt.code();
+    if !recording() && code == Code::Enter {
+        recording.set(true);
+    }
     if !recording() || is_modifier(&code) {
         return;
     }
+
     recording.set(false);
     picked_hotkey.set(if code == Code::Escape {
         None
