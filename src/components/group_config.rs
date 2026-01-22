@@ -3,12 +3,16 @@ use futures_util::StreamExt;
 use uuid::Uuid;
 
 use crate::components::lists::{AppList, ListOperation};
-use crate::components::util::{EditableText, HotkeyPicker};
+use crate::components::util::{EditableText, HotkeyPicker, InputMode};
 use crate::os::{AppSelection, System};
 use crate::services::ConfigService;
 
 #[component]
-pub fn GroupConfig(config_service: Signal<ConfigService>, group_id: Uuid) -> Element {
+pub fn GroupConfig(
+    config_service: Signal<ConfigService>,
+    group_id: Uuid,
+    in_creation_group: Signal<Option<Uuid>>,
+) -> Element {
     let group = use_memo(move || config_service.read().group(group_id).unwrap().clone());
     let picked_hotkey = use_signal(|| group().hotkey);
     use_effect(move || {
@@ -18,10 +22,28 @@ pub fn GroupConfig(config_service: Signal<ConfigService>, group_id: Uuid) -> Ele
     use_effect(move || config_service.write().set_name(group_id, name()));
     use_app_list_listener(config_service, group_id);
 
+    let list_operation_sender = use_context::<UnboundedSender<ListOperation<Uuid>>>();
+    let input_mode = use_signal(|| {
+        if in_creation_group() == Some(group_id) {
+            in_creation_group.set(None); // Consume signal so it doesn't persist
+            let on_cancel = EventHandler::new(move |_| {
+                let selected = [group_id].into_iter().collect();
+                let _ = list_operation_sender.unbounded_send(ListOperation::Remove(selected));
+            });
+            InputMode::Create { on_cancel }
+        } else {
+            InputMode::Edit
+        }
+    });
+
     rsx! {
         div {
             class: "flex flex-col gap-2",
-            EditableText { text: name }
+            EditableText {
+                text: name,
+                placeholder: "Group name".to_string(),
+                starting_mode: input_mode()
+            }
             HotkeyPicker { picked_hotkey }
             AppList { apps: group().apps().to_vec() }
         }

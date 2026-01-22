@@ -24,7 +24,8 @@ pub fn Root() -> Element {
     use_effect(move || window().set_decorations(true));
 
     let selected = use_signal(HashSet::<Uuid>::new);
-    use_group_list_listener(config_service, selected);
+    let in_creation_group = use_signal(|| None::<Uuid>);
+    use_group_list_listener(config_service, selected, in_creation_group);
     let active_group = use_memo(move || {
         if selected().len() == 1 {
             selected().iter().next().copied()
@@ -50,7 +51,8 @@ pub fn Root() -> Element {
                     GroupConfig {
                         key: "{group_id}",
                         config_service,
-                        group_id
+                        group_id,
+                        in_creation_group
                     }
                 }
             }
@@ -68,11 +70,15 @@ fn use_action_listener(config_service: Signal<ConfigService>) -> UnboundedSender
     listener.tx()
 }
 
-fn use_group_list_listener(config_service: Signal<ConfigService>, selected: Signal<HashSet<Uuid>>) {
+fn use_group_list_listener(
+    config_service: Signal<ConfigService>,
+    selected: Signal<HashSet<Uuid>>,
+    in_creation_group: Signal<Option<Uuid>>,
+) {
     let handle_app_change = use_coroutine(
         move |mut receiver: UnboundedReceiver<ListOperation<Uuid>>| async move {
             while let Some(list_operation) = receiver.next().await {
-                do_group_list_operation(config_service, selected, list_operation)
+                do_group_list_operation(config_service, selected, in_creation_group, list_operation)
             }
         },
     );
@@ -82,6 +88,7 @@ fn use_group_list_listener(config_service: Signal<ConfigService>, selected: Sign
 fn do_group_list_operation(
     mut config_service: Signal<ConfigService>,
     mut selected: Signal<HashSet<Uuid>>,
+    mut in_creation_group: Signal<Option<Uuid>>,
     list_operation: ListOperation<Uuid>,
 ) {
     selected.write().clear();
@@ -89,6 +96,7 @@ fn do_group_list_operation(
         ListOperation::Add => {
             let group_id = config_service.write().add_group("New Group".to_string());
             selected.write().insert(group_id);
+            in_creation_group.set(Some(group_id));
         }
         ListOperation::Remove(groups) => {
             for group_id in groups {
