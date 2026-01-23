@@ -14,10 +14,10 @@ pub fn GroupConfig(
     in_creation_group: Signal<Option<Uuid>>,
 ) -> Element {
     let group = use_memo(move || config_service.read().group(group_id).unwrap().clone());
-    let picked_hotkey = use_signal(|| group().hotkey);
-    use_effect(move || {
-        config_service.write().set_hotkey(group_id, picked_hotkey());
-    });
+    let set_hotkey = move |hotkey| {
+        // TODO this can fail
+        config_service.write().set_hotkey(group_id, hotkey);
+    };
     let name = use_signal(|| group().name.clone());
     use_effect(move || config_service.write().set_name(group_id, name()));
     use_app_list_listener(config_service, group_id);
@@ -44,7 +44,7 @@ pub fn GroupConfig(
                 placeholder: "Group name".to_string(),
                 starting_mode: input_mode()
             }
-            HotkeyPicker { picked_hotkey }
+            HotkeyPicker { hotkey: group().hotkey, set_hotkey }
             AppList { apps: group().apps().to_vec() }
         }
     }
