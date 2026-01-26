@@ -1,11 +1,10 @@
 use std::collections::HashSet;
 
 use dioxus::prelude::*;
-use futures_util::StreamExt;
 use uuid::Uuid;
 
 use crate::components::lists::{AppList, ListOperation};
-use crate::components::util::{EditableText, HotkeyPicker, InputMode};
+use crate::components::util::{EditableText, HotkeyPicker, InputMode, spawn_listener};
 use crate::os::{AppSelection, System};
 use crate::services::ConfigService;
 
@@ -23,16 +22,19 @@ pub fn GroupConfig(
     };
     let name = use_signal(|| group().name.clone());
     use_effect(move || config_service.write().set_name(group_id, name()));
-    use_app_list_listener(config_service, group_id);
+    let app_list_sender = use_app_list_listener(config_service, group_id);
+    use_context_provider(|| app_list_sender);
 
     let list_operation_sender = use_context::<UnboundedSender<ListOperation<Uuid>>>();
+
+    let on_cancel = EventHandler::new(move |_| {
+        let selected = HashSet::from([group_id]);
+        let _ = list_operation_sender.unbounded_send(ListOperation::Remove(selected));
+    });
+
     let input_mode = use_signal(|| {
         if in_creation_group() == Some(group_id) {
             in_creation_group.set(None); // Consume signal so it doesn't persist
-            let on_cancel = EventHandler::new(move |_| {
-                let selected = HashSet::from([group_id]);
-                let _ = list_operation_sender.unbounded_send(ListOperation::Remove(selected));
-            });
             InputMode::Create { on_cancel }
         } else {
             InputMode::Edit
@@ -59,32 +61,24 @@ pub fn GroupConfig(
     }
 }
 
-fn use_app_list_listener(config_service: Signal<ConfigService>, group_id: Uuid) {
-    let app_list_listener = use_coroutine(
-        move |mut receiver: UnboundedReceiver<ListOperation<String>>| async move {
-            while let Some(list_operation) = receiver.next().await {
-                do_app_list_operation(config_service, group_id, list_operation).await;
-            }
-        },
-    );
-    use_context_provider(|| app_list_listener.tx()); // used in the (generic) list
-}
-
-async fn do_app_list_operation(
+fn use_app_list_listener(
     mut config_service: Signal<ConfigService>,
     group_id: Uuid,
-    list_operation: ListOperation<String>,
-) {
-    match list_operation {
-        ListOperation::Add => {
-            if let Ok(Some(app)) = System::select_app().await {
-                config_service.write().add_app(group_id, app)
+) -> UnboundedSender<ListOperation<String>> {
+    spawn_listener(EventHandler::new(
+        move |list_operation| match list_operation {
+            ListOperation::Add => {
+                spawn(async move {
+                    if let Ok(Some(app)) = System::select_app().await {
+                        config_service.write().add_app(group_id, app)
+                    }
+                });
             }
-        }
-        ListOperation::Remove(apps) => {
-            for app_id in apps {
-                config_service.write().remove_app(group_id, app_id);
+            ListOperation::Remove(apps) => {
+                for app_id in apps {
+                    config_service.write().remove_app(group_id, app_id);
+                }
             }
-        }
-    }
+        },
+    ))
 }
