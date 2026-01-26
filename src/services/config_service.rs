@@ -2,7 +2,7 @@ use uuid::Uuid;
 
 use crate::models::{Action, Config, Group, Hotkey};
 use crate::os::App;
-use crate::services::hotkey::HotkeyBindError;
+use crate::services::hotkey_service::HotkeyBindError;
 use crate::services::{HotkeyService, SharedSender};
 
 pub struct ConfigService {

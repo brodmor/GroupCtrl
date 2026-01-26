@@ -1,6 +1,6 @@
 use crate::models::Action;
 use crate::services::ConfigService;
-use crate::services::group::GroupService;
+use crate::services::group_service::GroupService;
 
 #[derive(Default)]
 pub struct ActionService {

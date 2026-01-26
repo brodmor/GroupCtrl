@@ -1,7 +1,12 @@
+mod binder;
+mod error;
+mod sender;
+
+use binder::{DioxusBinder, HotkeyBinder};
+pub use error::HotkeyBindError;
+pub use sender::SharedSender;
+
 use crate::models::{Action, Config, Hotkey};
-use crate::services::SharedSender;
-use crate::services::hotkey::binder::{DioxusBinder, HotkeyBinder};
-use crate::services::hotkey::error::HotkeyBindError;
 
 pub struct HotkeyService<B: HotkeyBinder = DioxusBinder> {
     binder: B,
@@ -65,10 +70,10 @@ mod tests {
 
     use global_hotkey::hotkey::{Code, Modifiers};
 
-    use super::super::binder::tests::MockBinder;
-    use super::super::binder::tests::MockEvent::*;
+    use super::binder::tests::MockBinder;
+    use super::binder::tests::MockEvent::*;
     use super::*;
-    use crate::services::hotkey::binder::tests::MockEvent;
+    use crate::services::hotkey_service::binder::tests::MockEvent;
 
     impl HotkeyService<MockBinder> {
         fn new_mock(binder: MockBinder) -> Self {

@@ -6,7 +6,7 @@ use log::warn;
 
 use super::sender::SharedSender;
 use crate::models::{Action, Hotkey};
-use crate::services::hotkey::error::HotkeyBindError;
+use crate::services::hotkey_service::error::HotkeyBindError;
 
 pub trait HotkeyBinder {
     fn bind_hotkey(&mut self, hotkey: Hotkey, action: &Action) -> Result<(), HotkeyBindError>;

@@ -1,8 +1,8 @@
-mod action;
-mod config;
-mod group;
-mod hotkey;
+mod action_service;
+mod config_service;
+mod group_service;
+mod hotkey_service;
 
-pub use action::ActionService;
-pub use config::ConfigService;
-pub use hotkey::{HotkeyService, SharedSender};
+pub use action_service::ActionService;
+pub use config_service::ConfigService;
+pub use hotkey_service::{HotkeyService, SharedSender};
