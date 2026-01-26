@@ -17,10 +17,9 @@ pub(super) fn ListMenu<I>(selected: Signal<HashSet<I>>) -> Element
 where
     I: Clone + Eq + Hash + 'static,
 {
-    let sender = use_context::<UnboundedSender<ListOperation<I>>>();
-    let my_sender = sender.clone();
-    let add = move |_| drop(sender.unbounded_send(ListOperation::Add));
-    let remove = move |_| drop(my_sender.unbounded_send(ListOperation::Remove(selected())));
+    let tx = use_coroutine_handle::<ListOperation<I>>();
+    let add = move |_| tx.send(ListOperation::Add);
+    let remove = move |_| tx.send(ListOperation::Remove(selected()));
 
     rsx! {
         div {

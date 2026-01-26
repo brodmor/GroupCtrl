@@ -22,14 +22,12 @@ pub fn GroupConfig(
     };
     let name = use_signal(|| group().name.clone());
     use_effect(move || config_service.write().set_name(group_id, name()));
-    let app_list_sender = use_app_list_listener(config_service, group_id);
-    use_context_provider(|| app_list_sender);
+    use_app_list_listener(config_service, group_id);
 
-    let list_operation_sender = use_context::<UnboundedSender<ListOperation<Uuid>>>();
-
+    let list_operation_tx = use_coroutine_handle::<ListOperation<Uuid>>();
     let on_cancel = EventHandler::new(move |_| {
         let selected = HashSet::from([group_id]);
-        let _ = list_operation_sender.unbounded_send(ListOperation::Remove(selected));
+        list_operation_tx.send(ListOperation::Remove(selected));
     });
 
     let input_mode = use_signal(|| {
@@ -61,10 +59,7 @@ pub fn GroupConfig(
     }
 }
 
-fn use_app_list_listener(
-    mut config_service: Signal<ConfigService>,
-    group_id: Uuid,
-) -> UnboundedSender<ListOperation<String>> {
+fn use_app_list_listener(mut config_service: Signal<ConfigService>, group_id: Uuid) {
     spawn_listener(EventHandler::new(
         move |list_operation| match list_operation {
             ListOperation::Add => {

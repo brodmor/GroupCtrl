@@ -17,7 +17,8 @@ pub fn Root() -> Element {
     let config_service =
         use_signal(|| ConfigService::new(registered_record_sender.clone(), action_sender.clone()));
     // We inject the action sender like this to bypass the cyclic dependency with config service
-    action_sender.set(Some(spawn_action_listener(config_service)));
+    spawn_action_listener(config_service);
+    action_sender.set(Some(use_coroutine_handle::<Action>().tx())); // TODO remove shared sender
     use_context_provider(|| registered_record_sender);
     use_context_provider(|| action_sender);
 
@@ -25,8 +26,7 @@ pub fn Root() -> Element {
 
     let selected = use_signal(HashSet::<Uuid>::new);
     let in_creation_group = use_signal(|| None::<Uuid>);
-    let group_list_listener = use_group_list_listener(config_service, selected, in_creation_group);
-    use_context_provider(|| group_list_listener);
+    use_group_list_listener(config_service, selected, in_creation_group);
     let active_group = use_memo(move || {
         if selected().len() == 1 {
             selected().iter().next().copied()
@@ -61,7 +61,7 @@ pub fn Root() -> Element {
     }
 }
 
-fn spawn_action_listener(config_service: Signal<ConfigService>) -> UnboundedSender<Action> {
+fn spawn_action_listener(config_service: Signal<ConfigService>) {
     let mut action_service = ActionService::default();
     spawn_listener(EventHandler::new(move |action| {
         action_service.execute(&config_service.read(), &action)
@@ -72,7 +72,7 @@ fn use_group_list_listener(
     mut config_service: Signal<ConfigService>,
     mut selected: Signal<HashSet<Uuid>>,
     mut in_creation_group: Signal<Option<Uuid>>,
-) -> UnboundedSender<ListOperation<Uuid>> {
+) {
     spawn_listener(EventHandler::new(
         move |list_operation: ListOperation<Uuid>| {
             selected.write().clear();
