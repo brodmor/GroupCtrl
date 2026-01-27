@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 
 use dioxus::desktop::{ShortcutHandle, ShortcutRegistryError, window};
-use dioxus::hooks::use_coroutine_handle;
 use global_hotkey::HotKeyState::Pressed;
 use log::warn;
 
@@ -16,13 +15,18 @@ pub trait HotkeyBinder {
 
 pub struct DioxusBinder {
     record_registered_sender: SharedSender<Hotkey>,
+    action_sender: SharedSender<Action>,
     handles: HashMap<Hotkey, ShortcutHandle>,
 }
 
 impl DioxusBinder {
-    pub(super) fn new(record_registered_sender: SharedSender<Hotkey>) -> Self {
+    pub(super) fn new(
+        record_registered_sender: SharedSender<Hotkey>,
+        action_sender: SharedSender<Action>,
+    ) -> Self {
         Self {
             record_registered_sender,
+            action_sender,
             handles: HashMap::new(),
         }
     }
@@ -31,14 +35,17 @@ impl DioxusBinder {
 impl HotkeyBinder for DioxusBinder {
     fn bind_hotkey(&mut self, hotkey: Hotkey, action: &Action) -> Result<(), HotkeyBindError> {
         let my_recorded_register_sender = self.record_registered_sender.clone();
-        let action_sender = use_coroutine_handle::<Action>();
+        let my_action_sender = self.action_sender.clone();
         let my_action = action.clone();
         let callback = move |state| {
             if state == Pressed {
                 if let Some(sender) = my_recorded_register_sender.get() {
                     let _ = sender.unbounded_send(hotkey);
                 } else {
-                    action_sender.send(my_action.clone());
+                    let _ = my_action_sender
+                        .get()
+                        .unwrap()
+                        .unbounded_send(my_action.clone());
                 }
             }
         };

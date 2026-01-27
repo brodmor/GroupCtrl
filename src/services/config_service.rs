@@ -1,6 +1,6 @@
 use uuid::Uuid;
 
-use crate::models::{Config, Group, Hotkey};
+use crate::models::{Action, Config, Group, Hotkey};
 use crate::os::App;
 use crate::services::hotkey_service::HotkeyBindError;
 use crate::services::{HotkeyService, SharedSender};
@@ -11,10 +11,13 @@ pub struct ConfigService {
 }
 
 impl ConfigService {
-    pub fn new(record_registered_sender: SharedSender<Hotkey>) -> Self {
+    pub fn new(
+        record_registered_sender: SharedSender<Hotkey>,
+        action_sender: SharedSender<Action>,
+    ) -> Self {
         Self {
             config: Config::default(),
-            hotkey_service: HotkeyService::new(record_registered_sender),
+            hotkey_service: HotkeyService::new(record_registered_sender, action_sender),
         }
     }
 

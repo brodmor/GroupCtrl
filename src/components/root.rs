@@ -7,15 +7,20 @@ use uuid::Uuid;
 use crate::components::group_config::GroupConfig;
 use crate::components::lists::{GroupList, ListOperation};
 use crate::components::util::spawn_listener;
+use crate::models::Action;
 use crate::services::{ActionService, ConfigService, SharedSender};
 
 #[component]
 pub fn Root() -> Element {
     let registered_record_sender = use_hook(SharedSender::new);
-    let config_service = use_signal(|| ConfigService::new(registered_record_sender.clone()));
+    let action_sender = use_hook(SharedSender::new);
+    let config_service =
+        use_signal(|| ConfigService::new(registered_record_sender.clone(), action_sender.clone()));
     // We inject the action sender like this to bypass the cyclic dependency with config service
     spawn_action_listener(config_service);
+    action_sender.set(Some(use_coroutine_handle::<Action>().tx())); // TODO remove shared sender
     use_context_provider(|| registered_record_sender);
+    use_context_provider(|| action_sender);
 
     use_effect(move || window().set_decorations(true));
 

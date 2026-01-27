@@ -13,9 +13,12 @@ pub struct HotkeyService<B: HotkeyBinder = DioxusBinder> {
 }
 
 impl HotkeyService<DioxusBinder> {
-    pub fn new(record_registered_sender: SharedSender<Hotkey>) -> Self {
+    pub fn new(
+        record_registered_sender: SharedSender<Hotkey>,
+        action_sender: SharedSender<Action>,
+    ) -> Self {
         Self {
-            binder: DioxusBinder::new(record_registered_sender),
+            binder: DioxusBinder::new(record_registered_sender, action_sender),
         }
     }
 }
