@@ -8,14 +8,14 @@ use uuid::Uuid;
 use crate::components::group_config::GroupConfig;
 use crate::components::lists::{GroupList, ListOperation};
 use crate::components::util::use_listener;
-use crate::models::{Action, Config, Hotkey};
+use crate::models::{Config, Hotkey};
 use crate::services::{ActionService, ConfigReader, ConfigService};
 
 #[component]
 pub fn Root() -> Element {
     use_effect(move || window().set_decorations(true));
 
-    let config_service = use_signal(init_config_service);
+    let config_service = use_config_service();
     let selected = use_signal(HashSet::<Uuid>::new);
     let in_creation_group = use_signal(|| None::<Uuid>);
     use_group_list_listener(config_service, selected, in_creation_group);
@@ -54,13 +54,13 @@ pub fn Root() -> Element {
     }
 }
 
-fn init_config_service() -> ConfigService {
+fn use_config_service() -> Signal<ConfigService> {
     let config = Arc::new(RwLock::new(Config::default()));
     let config_reader = ConfigReader::new(config.clone());
     let mut action_service = ActionService::new(config_reader);
 
     let active_recorder = use_context_provider(|| Signal::new(None::<UnboundedSender<Hotkey>>));
-    let hotkey_sender = use_listener(Callback::new(move |(hotkey, action): (Hotkey, Action)| {
+    let hotkey_sender = use_listener(Callback::new(move |(hotkey, action)| {
         if let Some(sender) = active_recorder() {
             sender.unbounded_send(hotkey).unwrap();
         } else {
@@ -68,7 +68,7 @@ fn init_config_service() -> ConfigService {
         }
     }));
 
-    ConfigService::new(config, hotkey_sender)
+    use_signal(|| ConfigService::new(config, hotkey_sender))
 }
 
 fn use_group_list_listener(
