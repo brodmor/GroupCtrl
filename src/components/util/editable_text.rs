@@ -2,6 +2,8 @@ use std::rc::Rc;
 
 use dioxus::prelude::*;
 
+use crate::os::{EditActions, System};
+
 #[derive(PartialEq, Clone, Copy)]
 pub enum InputMode {
     Edit,
@@ -48,6 +50,10 @@ pub fn EditableText(
         Key::Escape => {
             cancel();
             set_focus(false);
+        }
+        #[cfg(target_os = "macos")]
+        Key::Character(c) if c == "a" && evt.modifiers().contains(Modifiers::META) => {
+            System::select_all();
         }
         _ => (),
     };
