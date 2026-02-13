@@ -1,3 +1,5 @@
+use std::path::PathBuf;
+
 use global_hotkey::hotkey::Modifiers;
 
 use crate::os::App;
@@ -17,4 +19,8 @@ pub trait AppSelection {
 
 pub trait Openable {
     async fn open(&self) -> anyhow::Result<()>;
+}
+
+pub trait ConfigDir {
+    fn config_dir() -> PathBuf;
 }

@@ -1,5 +1,6 @@
 mod action;
 mod config;
+mod config_persistence;
 mod group;
 mod hotkey;
 mod traits;

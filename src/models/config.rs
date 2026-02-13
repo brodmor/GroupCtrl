@@ -1,4 +1,5 @@
 use anyhow::Context;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::models::group::Group;
@@ -6,7 +7,7 @@ use crate::models::hotkey::Hotkey;
 use crate::models::{Action, Bindable, Identifiable};
 use crate::os::App;
 
-#[derive(Default)]
+#[derive(Default, Deserialize, Serialize, Debug)]
 pub struct Config {
     groups: Vec<Group>,
     // settings: Settings as enum (can implement Actionable)

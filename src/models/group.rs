@@ -1,12 +1,13 @@
 use std::fmt::{Display, Formatter};
 
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::models::Hotkey;
 use crate::models::traits::Identifiable;
 use crate::os::App;
 
-#[derive(Debug, PartialEq, Eq, Clone)]
+#[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub struct Group {
     id: Uuid,
     pub name: String,
