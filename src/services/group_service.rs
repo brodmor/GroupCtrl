@@ -9,7 +9,7 @@ use crate::models::Identifiable;
 use crate::os::{App, AppObserver, AppQuery, Openable, System};
 use crate::services::ConfigReader;
 
-const MAX_HISTORY: usize = 128;
+const MAX_HISTORY: usize = 1024; // Prevent potential memory leak
 
 #[derive(Clone)]
 pub struct GroupService {
@@ -30,10 +30,10 @@ impl GroupService {
     fn spawn_history_writer(history: Arc<Mutex<VecDeque<String>>>) {
         let rx = System::observe_app_activations();
         thread::spawn(move || {
-            for bundle_id in rx {
+            for app_id in rx {
                 let mut history = history.lock().unwrap();
-                history.retain(|h| h != &bundle_id);
-                history.push_front(bundle_id);
+                history.retain(|aid| aid != &app_id);
+                history.push_front(app_id);
                 history.truncate(MAX_HISTORY);
             }
         });
