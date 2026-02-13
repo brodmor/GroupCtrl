@@ -55,7 +55,7 @@ pub fn Root() -> Element {
 }
 
 fn use_config_service() -> Signal<ConfigService> {
-    let config = Arc::new(RwLock::new(Config::default()));
+    let config = Arc::new(RwLock::new(Config::load().unwrap_or_default()));
     let config_reader = ConfigReader::new(config.clone());
     let action_service = ActionService::new(config_reader);
 

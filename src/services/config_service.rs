@@ -34,26 +34,36 @@ impl ConfigService {
         self.config.write().unwrap()
     }
 
+    fn save(&self) {
+        self.config().save().unwrap();
+    }
+
     pub fn add_group(&mut self, name: String) -> Uuid {
-        self.config_mut().add_group(name)
+        let id = self.config_mut().add_group(name);
+        self.save();
+        id
     }
 
     pub fn remove_group(&mut self, group_id: Uuid) {
         let hotkey = self.config().group(group_id).unwrap().hotkey;
         self.hotkey_service.unbind_hotkey(hotkey);
         self.config_mut().remove_group(group_id);
+        self.save();
     }
 
     pub fn set_name(&mut self, group_id: Uuid, name: String) {
-        self.config_mut().set_name(group_id, name).unwrap()
+        self.config_mut().set_name(group_id, name).unwrap();
+        self.save();
     }
 
     pub fn add_app(&mut self, group_id: Uuid, app: App) {
-        self.config_mut().add_app(group_id, app).unwrap()
+        self.config_mut().add_app(group_id, app).unwrap();
+        self.save();
     }
 
     pub fn remove_app(&mut self, group_id: Uuid, app_id: String) {
-        self.config_mut().remove_app(group_id, app_id).unwrap()
+        self.config_mut().remove_app(group_id, app_id).unwrap();
+        self.save();
     }
 
     pub fn set_hotkey(
@@ -65,6 +75,7 @@ impl ConfigService {
         self.hotkey_service
             .bind_hotkey(hotkey, existing_hotkey, action)?;
         self.config_mut().set_hotkey(group_id, hotkey).unwrap();
+        self.save();
         Ok(())
     }
 }

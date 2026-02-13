@@ -9,6 +9,7 @@ use crate::os::App;
 
 #[derive(Debug, PartialEq, Eq, Clone, Serialize, Deserialize)]
 pub struct Group {
+    #[serde(skip, default = "Uuid::new_v4")]
     id: Uuid,
     pub name: String,
     pub hotkey: Option<Hotkey>,

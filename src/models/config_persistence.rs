@@ -13,13 +13,11 @@ impl Config {
             .join(CONFIG_FILE_NAME)
     }
 
-    #[allow(unused)]
     pub fn load() -> anyhow::Result<Self> {
         let content = std::fs::read_to_string(Self::path())?;
         Ok(serde_yaml::from_str(&content)?)
     }
 
-    #[allow(unused)]
     pub fn save(&self) -> anyhow::Result<()> {
         if let Some(parent) = Self::path().parent() {
             std::fs::create_dir_all(parent)?;
