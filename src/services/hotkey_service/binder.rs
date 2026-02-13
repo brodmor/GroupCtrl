@@ -39,7 +39,7 @@ impl HotkeyBinder for DioxusBinder {
             }
         };
         let handle = window()
-            .create_shortcut(hotkey.0, callback)
+            .create_shortcut(hotkey.global_hotkey(), callback)
             .map_err(|e| match e {
                 ShortcutRegistryError::InvalidShortcut(_) => HotkeyBindError::Invalid { hotkey },
                 _ => HotkeyBindError::Unknown { hotkey },
