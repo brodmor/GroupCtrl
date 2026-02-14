@@ -1,12 +1,12 @@
 use dioxus::prelude::*;
 use uuid::Uuid;
 
-use crate::components::lists::{AppList, ListOperation};
-use crate::components::util::{
-    EditableText, HotkeyPicker, InputMode, LabeledRow, MainAppPicker, use_listener,
-};
 use crate::os::{AppSelection, System};
 use crate::services::ConfigService;
+use crate::ui::lists::{AppList, ListOperation};
+use crate::ui::util::{
+    EditableText, HotkeyPicker, InputMode, LabeledRow, MainAppPicker, use_listener,
+};
 
 #[component]
 pub fn GroupConfig(

@@ -3,9 +3,9 @@ use std::hash::Hash;
 
 use dioxus::prelude::*;
 
-use crate::components::lists::list_menu::ListMenu;
-use crate::components::lists::list_row::ListRow;
 use crate::models::Identifiable;
+use crate::ui::lists::list_menu::ListMenu;
+use crate::ui::lists::list_row::ListRow;
 
 #[component]
 pub(super) fn List<E, I>(title: String, elements: Vec<E>, selected: Signal<HashSet<I>>) -> Element

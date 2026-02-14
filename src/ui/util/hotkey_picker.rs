@@ -2,8 +2,8 @@ use std::rc::Rc;
 
 use dioxus::prelude::*;
 
-use crate::components::util::use_listener;
 use crate::models::Hotkey;
+use crate::ui::util::use_listener;
 use crate::util::is_modifier;
 
 #[component]

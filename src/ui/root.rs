@@ -5,11 +5,11 @@ use dioxus::desktop::window;
 use dioxus::prelude::*;
 use uuid::Uuid;
 
-use crate::components::group_config::GroupConfig;
-use crate::components::lists::{GroupList, ListOperation};
-use crate::components::util::use_listener;
 use crate::models::{Config, Hotkey};
 use crate::services::{ActionService, ConfigReader, ConfigService};
+use crate::ui::group_config::GroupConfig;
+use crate::ui::lists::{GroupList, ListOperation};
+use crate::ui::util::use_listener;
 
 #[component]
 pub fn Root() -> Element {

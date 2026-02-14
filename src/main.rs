@@ -1,14 +1,14 @@
-mod components;
 mod models;
 mod os;
 mod services;
+mod ui;
 mod util;
 
 use dioxus::desktop::{Config, LogicalSize, WindowBuilder};
 use dioxus::prelude::*;
 use simplelog::*;
 
-use crate::components::Root;
+use crate::ui::Root;
 
 fn setup_logging() -> anyhow::Result<()> {
     std::fs::create_dir_all("logs")?;
