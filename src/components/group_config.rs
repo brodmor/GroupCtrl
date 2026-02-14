@@ -1,5 +1,3 @@
-use std::collections::HashSet;
-
 use dioxus::prelude::*;
 use uuid::Uuid;
 
@@ -38,8 +36,7 @@ pub fn GroupConfig(
 
     let list_operation_tx = use_coroutine_handle::<ListOperation<Uuid>>();
     let on_cancel = Callback::new(move |_| {
-        let selected = HashSet::from([group_id]);
-        list_operation_tx.send(ListOperation::Remove(selected));
+        list_operation_tx.send(ListOperation::Remove(group_id));
     });
 
     let input_mode = use_signal(|| {
@@ -91,10 +88,8 @@ fn use_app_list_listener(mut config_service: Signal<ConfigService>, group_id: Uu
                 }
             });
         }
-        ListOperation::Remove(apps) => {
-            for app_id in apps {
-                config_service.write().remove_app(group_id, app_id);
-            }
+        ListOperation::Remove(app_id) => {
+            config_service.write().remove_app(group_id, app_id);
         }
     }));
 }

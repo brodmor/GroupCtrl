@@ -87,10 +87,8 @@ fn use_group_list_listener(
                 selected.write().insert(group_id);
                 in_creation_group.set(Some(group_id));
             }
-            ListOperation::Remove(groups) => {
-                for group_id in groups {
-                    config_service.write().remove_group(group_id);
-                }
+            ListOperation::Remove(group_id) => {
+                config_service.write().remove_group(group_id);
             }
         }
     }));
