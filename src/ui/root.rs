@@ -10,7 +10,7 @@ use crate::models::{Config, Hotkey, Identifiable};
 use crate::services::{ActionService, ConfigReader, ConfigService};
 use crate::ui::group_config::GroupConfig;
 use crate::ui::lists::ListOperation;
-use crate::ui::util::{SmallButton, use_listener};
+use crate::ui::util::{SmallButton, use_listener, use_selection};
 
 #[component]
 pub fn Root() -> Element {
@@ -118,24 +118,13 @@ fn use_config_service() -> Signal<ConfigService> {
 
 #[component]
 fn GroupMenuItem(group_id: Uuid, name: String, selected: Signal<HashSet<Uuid>>) -> Element {
-    let is_active = use_memo(move || selected().contains(&group_id));
+    let (is_active, toggle) = use_selection(group_id, selected);
 
     rsx! {
         SidebarMenuItem {
             SidebarMenuButton {
                 is_active: is_active(),
-                onclick: move |e: MouseEvent| {
-                    if e.modifiers().meta() || e.modifiers().ctrl() {
-                        if selected().contains(&group_id) {
-                            selected.write().remove(&group_id);
-                        } else {
-                            selected.write().insert(group_id);
-                        }
-                    } else {
-                        selected.write().clear();
-                        selected.write().insert(group_id);
-                    }
-                },
+                onclick: move |e| toggle.call(e),
                 span { "{name}" }
             }
         }
