@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use dioxus::prelude::*;
 
+use crate::components::input::Input;
 use crate::os::{EditActions, System};
 
 #[derive(PartialEq, Clone, Copy)]
@@ -60,12 +61,12 @@ pub fn EditableText(
     let onblur = move |_| cancel();
 
     rsx! {
-        input {
-            class: "input input-ghost input-xs font-bold text-sm w-full p-1",
+        Input {
+            class: "input text-sm",
             value: "{draft}",
             placeholder: "{placeholder}",
-            onmounted: move |evt| input_handle.set(Some(evt.data())),
-            oninput: move |evt| draft.set(evt.value()),
+            onmounted: move |evt: MountedEvent| input_handle.set(Some(evt.data())),
+            oninput: move |evt: FormEvent| draft.set(evt.value()),
             onkeydown,
             onblur,
         }

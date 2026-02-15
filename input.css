@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
-@plugin "daisyui" {
-    themes: dim;
-}
-
 @source "./src";
+
+:root {
+    color-scheme: dark;
+}

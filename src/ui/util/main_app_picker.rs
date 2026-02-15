@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use crate::models::Identifiable;
+use crate::components::select::*;
 use crate::os::App;
 
 #[component]
@@ -9,25 +9,35 @@ pub fn MainAppPicker(
     main_app: Option<App>,
     set_main_app: Callback<Option<App>>,
 ) -> Element {
-    let onchange_apps = apps.clone();
-    let onchange = move |evt: Event<FormData>| {
-        let value = evt.value();
-        let app = onchange_apps.iter().find(|app| app.id() == value).cloned();
-        set_main_app.call(app);
-    };
-    let placeholder_class = if main_app.is_none() { "opacity-50" } else { "" };
+    let value: Option<Option<Option<App>>> = Some(Some(main_app));
     rsx! {
-        select {
-            class: "btn btn-sm btn-outline flex-1 focus:outline-none {placeholder_class}",
-            value: main_app.map(|a| a.id()).unwrap_or_default(),
-            onchange,
-            option { value: "", class: "opacity-50", "(Most Recent)" }
-            for app in apps.iter() {
-                option {
-                    value: app.id(),
-                    "{app}"
+        div { class: "flex-1",
+        Select::<Option<App>> {
+            value,
+            placeholder: "\u{00A0}".to_string(),
+            on_value_change: move |choice: Option<Option<App>>| {
+                set_main_app.call(choice.flatten());
+            },
+            SelectTrigger {
+                SelectValue {}
+            }
+            SelectList {
+                SelectOption::<Option<App>> {
+                    value: None::<App>,
+                    text_value: "(Most Recent)".to_string(),
+                    index: 0usize,
+                    "(Most Recent)"
+                }
+                for (i, app) in apps.iter().enumerate() {
+                    SelectOption::<Option<App>> {
+                        value: Some(app.clone()),
+                        text_value: app.to_string(),
+                        index: i + 1,
+                        "{app}"
+                    }
                 }
             }
+        }
         }
     }
 }

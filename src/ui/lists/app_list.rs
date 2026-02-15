@@ -10,6 +10,7 @@ use crate::os::App;
 pub fn AppList(apps: Vec<App>) -> Element {
     rsx! {
         div {
+            class: "flex flex-col flex-1 min-h-0",
             List {
                 title: "Apps".to_string(),
                 elements: apps,

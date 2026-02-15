@@ -2,6 +2,7 @@ use std::rc::Rc;
 
 use dioxus::prelude::*;
 
+use crate::components::button::{Button, ButtonVariant};
 use crate::models::Hotkey;
 use crate::ui::util::use_listener;
 use crate::util::is_modifier;
@@ -21,33 +22,34 @@ pub fn HotkeyPicker(mut hotkey: Option<Hotkey>, set_hotkey: Callback<Option<Hotk
 
     let label = if recording() {
         rsx! {
-            span { class: "opacity-75", "Recording..." }
+            span { class: "opacity-75 text-xs", "Recording..." }
         }
     } else {
         match hotkey {
             None => rsx! {
-                span { class: "opacity-50", "None" }
+                span { class: "opacity-50 text-xs", "None" }
             },
             Some(key) => rsx! {
-                span { class: "text-base-content gap-0.5 flex",
+                span { class: "gap-0.5 flex",
                     for part in key.show_parts() {
-                        kbd { class: "kbd kbd-sm", "{part}" }
+                        // TODO styling
+                        "{part}"
                     }
                 }
             },
         }
     };
-    let btn_class = if recording() {
-        "btn-neutral"
+    let variant = if recording() {
+        ButtonVariant::Secondary
     } else {
-        "btn-outline"
+        ButtonVariant::Outline
     };
     rsx! {
-        div {
-            role: "button",
-            class: "btn btn-sm flex-1 {btn_class}",
+        Button {
+            variant,
+            class: "button flex-1",
             tabindex: 0,
-            onmounted: move |evt| input_handle.set(Some(evt.data())),
+            onmounted: move |evt: MountedEvent| input_handle.set(Some(evt.data())),
             onclick: move |_| recording.set(true),
             onkeydown, // globally registered keys never make it here
             onblur: move |_| recording.set(false),

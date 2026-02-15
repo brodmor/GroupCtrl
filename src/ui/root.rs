@@ -5,11 +5,12 @@ use dioxus::desktop::window;
 use dioxus::prelude::*;
 use uuid::Uuid;
 
-use crate::models::{Config, Hotkey};
+use crate::components::sidebar::*;
+use crate::models::{Config, Hotkey, Identifiable};
 use crate::services::{ActionService, ConfigReader, ConfigService};
 use crate::ui::group_config::GroupConfig;
-use crate::ui::lists::{GroupList, ListOperation};
-use crate::ui::util::use_listener;
+use crate::ui::lists::ListOperation;
+use crate::ui::util::{SmallButton, use_listener};
 
 #[component]
 pub fn Root() -> Element {
@@ -28,25 +29,66 @@ pub fn Root() -> Element {
         }
     });
 
+    let tx = use_coroutine_handle::<ListOperation<Uuid>>();
+
+    let add = move |_: MouseEvent| tx.send(ListOperation::Add);
+    let remove = move |_: MouseEvent| {
+        for item in selected() {
+            tx.send(ListOperation::Remove(item));
+        }
+    };
+
+    let groups = config_service.read().config().groups().clone();
+
     rsx! {
         div {
             "data-theme": "dim",
-            class: "flex h-screen",
-            aside {
-                class: "flex-1 p-2 border-r",
-                GroupList {
-                    groups: config_service.read().config().groups().clone(),
-                    selected
+            SidebarProvider {
+                Sidebar {
+                    side: SidebarSide::Left,
+                    variant: SidebarVariant::Sidebar,
+                    collapsible: SidebarCollapsible::None,
+
+                    SidebarHeader {
+                        class: "!p-1",
+                        div {
+                            class: "flex items-center justify-between w-full",
+                            span {
+                                class: "sidebar-group-label !pt-1.5",
+                                "Groups"
+                            }
+                            div {
+                                class: "flex items-center gap-1",
+                                SmallButton { onclick: add, "+" }
+                                SmallButton { onclick: remove, "-" }
+                            }
+                        }
+                    }
+                    SidebarContent {
+                        SidebarGroup { class: "!p-1",
+                            SidebarGroupContent {
+                                SidebarMenu {
+                                    for group in groups {
+                                        GroupMenuItem {
+                                            key: "{group.id()}",
+                                            group_id: group.id(),
+                                            name: group.name.clone(),
+                                            selected,
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
-            }
-            main {
-                class: "flex-1 p-2",
-                if let Some(group_id) = active_group() {
-                    GroupConfig {
-                        key: "{group_id}",
-                        config_service,
-                        group_id,
-                        in_creation_group
+                SidebarInset {
+                    if let Some(group_id) = active_group() {
+                        GroupConfig {
+                            key: "{group_id}",
+                            config_service,
+                            group_id,
+                            in_creation_group
+                        }
                     }
                 }
             }
@@ -72,6 +114,32 @@ fn use_config_service() -> Signal<ConfigService> {
     }));
 
     use_signal(|| ConfigService::new(config, hotkey_sender))
+}
+
+#[component]
+fn GroupMenuItem(group_id: Uuid, name: String, selected: Signal<HashSet<Uuid>>) -> Element {
+    let is_active = use_memo(move || selected().contains(&group_id));
+
+    rsx! {
+        SidebarMenuItem {
+            SidebarMenuButton {
+                is_active: is_active(),
+                onclick: move |e: MouseEvent| {
+                    if e.modifiers().meta() || e.modifiers().ctrl() {
+                        if selected().contains(&group_id) {
+                            selected.write().remove(&group_id);
+                        } else {
+                            selected.write().insert(group_id);
+                        }
+                    } else {
+                        selected.write().clear();
+                        selected.write().insert(group_id);
+                    }
+                },
+                span { "{name}" }
+            }
+        }
+    }
 }
 
 fn use_group_list_listener(

@@ -1,12 +1,11 @@
 use dioxus::prelude::*;
 use uuid::Uuid;
 
+use crate::components::label::Label;
 use crate::os::{AppSelection, System};
 use crate::services::ConfigService;
 use crate::ui::lists::{AppList, ListOperation};
-use crate::ui::util::{
-    EditableText, HotkeyPicker, InputMode, LabeledRow, MainAppPicker, use_listener,
-};
+use crate::ui::util::{EditableText, HotkeyPicker, InputMode, MainAppPicker, use_listener};
 
 #[component]
 pub fn GroupConfig(
@@ -50,24 +49,26 @@ pub fn GroupConfig(
 
     rsx! {
         div {
-            class: "flex flex-col gap-2",
+            class: "flex flex-col gap-2 flex-1 min-h-0 p-2",
+            style: "max-width: var(--sidebar-width);",
             EditableText {
                 text: name,
                 placeholder: "Group name".to_string(),
                 starting_mode: input_mode()
             }
-            LabeledRow {
-                label: "On".to_string(),
-                HotkeyPicker { hotkey: group().hotkey, set_hotkey },
-            }
-            if let Err(error) = set_hotkey_result() {
-                span {
-                    class: "text-xs text-error",
-                    "{error}"
+            div {
+                class: "grid items-center gap-2",
+                style: "grid-template-columns: auto 1fr;",
+                Label { html_for: "hotkey-picker", "On" }
+                HotkeyPicker { hotkey: group().hotkey, set_hotkey }
+                if let Err(error) = set_hotkey_result() {
+                    div {}
+                    span {
+                        class: "text-xs text-error",
+                        "{error}"
+                    }
                 }
-            }
-            LabeledRow {
-                label: "Open".to_string(),
+                Label { html_for: "main-app-picker", "Open" }
                 MainAppPicker {
                     apps: group().apps().to_vec(),
                     main_app: group().main_app().cloned(),

@@ -1,3 +1,5 @@
+#[allow(dead_code, unused_imports)]
+mod components;
 mod models;
 mod os;
 mod services;
@@ -37,13 +39,15 @@ fn main() {
 
     #[cfg(target_os = "macos")]
     let head = format!(
-        r#"<link rel="stylesheet" href="{}">"#,
-        asset!("/assets/tailwind.css")
+        r#"<link rel="stylesheet" href="{}"><link rel="stylesheet" href="{}">"#,
+        asset!("/assets/tailwind.css"),
+        asset!("/assets/dx-components-theme.css")
     );
     #[cfg(target_os = "windows")]
     let head = format!(
-        r#"<style>{}</style>"#,
-        include_str!("../assets/tailwind.css")
+        r#"<style>{}{}</style>"#,
+        include_str!("../assets/tailwind.css"),
+        include_str!("../assets/dx-components-theme.css")
     );
 
     LaunchBuilder::desktop()
@@ -51,7 +55,6 @@ fn main() {
             Config::new()
                 .with_window(
                     WindowBuilder::new()
-                        .with_transparent(true)
                         .with_decorations(false)
                         .with_always_on_top(false)
                         .with_inner_size(LogicalSize::new(400, 300))

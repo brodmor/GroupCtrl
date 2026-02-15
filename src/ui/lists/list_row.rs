@@ -29,15 +29,12 @@ where
         }
     };
 
-    let btn_class = if is_selected() {
-        "btn-active"
-    } else {
-        "btn-ghost"
-    };
-
     rsx! {
         button {
-           class: "btn btn-sm w-full justify-start {btn_class}",
+            class: "sidebar-menu-button",
+            "data-sidebar": "menu-button",
+            "data-size": "default",
+            "data-active": is_selected(),
             onclick: toggle_active,
             { element.render() }
         }

@@ -3,6 +3,8 @@ use std::hash::Hash;
 
 use dioxus::prelude::*;
 
+use crate::ui::util::SmallButton;
+
 #[derive(Clone)]
 pub enum ListOperation<I>
 where
@@ -27,18 +29,9 @@ where
 
     rsx! {
         div {
-            class: "flex gap-1",
-            button {
-                class: "btn btn-xs btn-square",
-                onclick: add,
-                "+"
-            }
-            button {
-                class: "btn btn-xs btn-square",
-                disabled: selected().is_empty(),
-                onclick: remove,
-                "-"
-            }
+            class: "flex items-center gap-1",
+            SmallButton { onclick: add, "+" }
+            SmallButton { onclick: remove, "-" }
         }
     }
 }
