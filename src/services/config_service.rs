@@ -56,6 +56,11 @@ impl ConfigService {
         self.save();
     }
 
+    pub fn set_target(&mut self, group_id: Uuid, app: Option<App>) {
+        self.config_mut().set_target(group_id, app).unwrap();
+        self.save();
+    }
+
     pub fn add_app(&mut self, group_id: Uuid, app: App) {
         self.config_mut().add_app(group_id, app).unwrap();
         self.save();
@@ -63,11 +68,6 @@ impl ConfigService {
 
     pub fn remove_app(&mut self, group_id: Uuid, app_id: String) {
         self.config_mut().remove_app(group_id, app_id).unwrap();
-        self.save();
-    }
-
-    pub fn set_main_app(&mut self, group_id: Uuid, app: Option<App>) {
-        self.config_mut().set_main_app(group_id, app).unwrap();
         self.save();
     }
 

@@ -5,7 +5,7 @@ use crate::components::label::Label;
 use crate::os::{AppSelection, System};
 use crate::services::ConfigService;
 use crate::ui::lists::{AppList, ListOperation};
-use crate::ui::util::{EditableText, HotkeyPicker, InputMode, MainAppPicker, use_listener};
+use crate::ui::util::{EditableText, HotkeyPicker, InputMode, TargetPicker, use_listener};
 
 #[component]
 pub fn GroupConfig(
@@ -21,16 +21,16 @@ pub fn GroupConfig(
             .unwrap()
             .clone()
     });
+    let name = use_signal(|| group().name.clone());
+    use_effect(move || config_service.write().set_name(group_id, name()));
     let mut set_hotkey_result = use_signal(|| Ok(()));
     let set_hotkey = move |hotkey| {
         let result = config_service.write().set_hotkey(group_id, hotkey);
         set_hotkey_result.set(result);
     };
-    let set_main_app = Callback::new(move |app| {
-        config_service.write().set_main_app(group_id, app);
+    let set_target = Callback::new(move |app| {
+        config_service.write().set_target(group_id, app);
     });
-    let name = use_signal(|| group().name.clone());
-    use_effect(move || config_service.write().set_name(group_id, name()));
     use_app_list_listener(config_service, group_id);
 
     let list_operation_tx = use_coroutine_handle::<ListOperation<Uuid>>();
@@ -68,11 +68,11 @@ pub fn GroupConfig(
                         "{error}"
                     }
                 }
-                Label { html_for: "main-app-picker", "Target" }
-                MainAppPicker {
+                Label { html_for: "target-picker", "Target" }
+                TargetPicker {
                     apps: group().apps().to_vec(),
-                    main_app: group().main_app().cloned(),
-                    set_main_app: set_main_app,
+                    target: group().target.clone(),
+                    set_target: set_target,
                 }
             }
             AppList { apps: group().apps().to_vec() }

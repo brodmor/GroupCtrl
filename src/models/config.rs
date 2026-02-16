@@ -59,6 +59,12 @@ impl Config {
         Ok(())
     }
 
+    pub fn set_target(&mut self, group_id: Uuid, app: Option<App>) -> anyhow::Result<()> {
+        let group = self.group_mut(group_id)?;
+        group.target = app;
+        Ok(())
+    }
+
     pub fn add_app(&mut self, group_id: Uuid, app: App) -> anyhow::Result<()> {
         let group = self.group_mut(group_id)?;
         group.add_app(app);
@@ -68,12 +74,6 @@ impl Config {
     pub fn remove_app(&mut self, group_id: Uuid, app_id: String) -> anyhow::Result<()> {
         let group = self.group_mut(group_id)?;
         group.remove_app(app_id);
-        Ok(())
-    }
-
-    pub fn set_main_app(&mut self, group_id: Uuid, app: Option<App>) -> anyhow::Result<()> {
-        let group = self.group_mut(group_id)?;
-        group.set_main_app(app);
         Ok(())
     }
 }

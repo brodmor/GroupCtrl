@@ -44,7 +44,7 @@ impl GroupService {
         let apps = group.apps();
         if let Some(app) = self
             .next_app(apps)
-            .or_else(|| group.main_app().cloned())
+            .or_else(|| group.target.clone())
             .or_else(|| self.find_in_history(apps)) // most recent
             .or_else(|| apps.first().cloned())
         {

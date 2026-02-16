@@ -4,23 +4,23 @@ use crate::components::select::*;
 use crate::os::App;
 
 #[component]
-pub fn MainAppPicker(
+pub fn TargetPicker(
     apps: Vec<App>,
-    main_app: Option<App>,
-    set_main_app: Callback<Option<App>>,
+    target: Option<App>,
+    set_target: Callback<Option<App>>,
 ) -> Element {
-    let placeholder = match &main_app {
+    let placeholder = match &target {
         Some(app) => app.to_string(),
         None => "(Most Recent)".to_string(),
     };
-    let value: Option<Option<Option<App>>> = Some(Some(main_app));
+    let value: Option<Option<Option<App>>> = Some(Some(target));
     rsx! {
         div { class: "flex-1",
         Select::<Option<App>> {
             value,
             placeholder,
             on_value_change: move |choice: Option<Option<App>>| {
-                set_main_app.call(choice.flatten());
+                set_target.call(choice.flatten());
             },
             SelectTrigger {
                 SelectValue {}
