@@ -16,7 +16,7 @@ where
 {
     rsx! {
         div {
-            class: "flex flex-col flex-1 min-h-0 rounded-md",
+            class: "flex flex-col flex-1 min-h-0 rounded-xl",
             style: "background: var(--sidebar-background); color: var(--sidebar-foreground);",
             div {
                 class: "flex items-center justify-between w-full !p-1",
