@@ -6,6 +6,7 @@ use dioxus::prelude::*;
 use lucide_dioxus::{Minus, Plus};
 use uuid::Uuid;
 
+use crate::components::label::Label;
 use crate::components::sidebar::*;
 use crate::models::{Config, Hotkey, Identifiable};
 use crate::services::{ActionService, ConfigReader, ConfigService};
@@ -54,7 +55,7 @@ pub fn Root() -> Element {
                         class: "!p-2 !pb-0",
                         div {
                             class: "flex items-center justify-between w-full",
-                            span { class: "label p-1", "Groups" }
+                            Label { html_for: "group-list", class: "p-1", "Groups" }
                             div {
                                 class: "flex items-center gap-1",
                                 SmallButton { onclick: add, Plus {} }
@@ -65,7 +66,7 @@ pub fn Root() -> Element {
                     SidebarContent {
                         SidebarGroup { class: "!p-2 !pt-1",
                             SidebarGroupContent {
-                                SidebarMenu {
+                                SidebarMenu { id: "group-list",
                                     for group in groups {
                                         GroupMenuItem {
                                             key: "{group.id()}",

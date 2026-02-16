@@ -4,6 +4,7 @@ use std::hash::Hash;
 use dioxus::prelude::*;
 use dioxus_primitives::scroll_area::{ScrollArea, ScrollDirection};
 
+use crate::components::label::Label;
 use crate::models::Identifiable;
 use crate::ui::lists::list_menu::ListMenu;
 use crate::ui::lists::list_row::ListRow;
@@ -20,10 +21,7 @@ where
             style: "background: var(--sidebar-background); color: var(--sidebar-foreground);",
             div {
                 class: "flex items-center justify-between w-full !p-2 !pb-0",
-                span {
-                    class: "label p-1",
-                    "{title}"
-                }
+                Label { html_for: "app-list", class: "p-1", "{title}" }
                 ListMenu { selected }
             }
             div {
@@ -35,6 +33,7 @@ where
                     ScrollArea {
                         direction: ScrollDirection::Vertical,
                         ul {
+                            id: "app-list",
                             class: "sidebar-menu",
                             "data-sidebar": "menu",
                             for element in elements {
