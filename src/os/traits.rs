@@ -9,6 +9,7 @@ pub type ModifierFormat = [(Modifiers, &'static str); 4];
 pub trait KeyboardBehavior {
     fn serde_modifier_format() -> ModifierFormat;
     fn gui_modifier_format() -> ModifierFormat;
+    fn key_sep() -> &'static str;
     fn is_multi_select(modifiers: Modifiers) -> bool;
 }
 

@@ -52,7 +52,7 @@ impl HotkeyBinder for DioxusBinder {
         if let Some(handle) = self.handles.remove(&hotkey) {
             window().remove_shortcut(handle);
         } else {
-            warn!("missing handle for hotkey {}", hotkey);
+            warn!("missing handle for hotkey {:?}", hotkey);
         }
     }
 }

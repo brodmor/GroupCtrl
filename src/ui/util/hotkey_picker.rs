@@ -30,11 +30,9 @@ pub fn HotkeyPicker(mut hotkey: Option<Hotkey>, set_hotkey: Callback<Option<Hotk
                 span { class: "opacity-50", "None" }
             },
             Some(key) => rsx! {
-                span { class: "gap-0.5 flex justify-center",
-                    for part in key.show_parts() {
-                        // TODO styling
-                        "{part}"
-                    }
+                span {
+                    class: "gap-0.5 flex justify-center",
+                    "{key}"
                 }
             },
         }

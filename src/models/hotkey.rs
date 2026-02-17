@@ -1,11 +1,12 @@
-use std::fmt::{Display, Formatter};
+use std::fmt::{Debug, Display, Formatter};
 
 use global_hotkey::hotkey::{Code, HotKey as GlobalHotkey, Modifiers};
 use serde::{Deserialize, Serialize};
 
 use crate::models::hotkey_conversion::show_hotkey_parts;
+use crate::os::{KeyboardBehavior, System};
 
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Clone, Copy, Hash, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(into = "String", from = "String")]
 pub struct Hotkey {
     pub(super) mods: Modifiers,
@@ -28,6 +29,12 @@ impl Hotkey {
 
 impl Display for Hotkey {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{}", self.show_parts().join("+"))
+        write!(f, "{}", self.show_parts().join(System::key_sep()))
+    }
+}
+
+impl Debug for Hotkey {
+    fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", String::from(*self)) // uses From impl, different from to_string
     }
 }

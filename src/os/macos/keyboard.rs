@@ -21,6 +21,10 @@ impl KeyboardBehavior for System {
         ]
     }
 
+    fn key_sep() -> &'static str {
+        ""
+    }
+
     fn is_multi_select(modifiers: Modifiers) -> bool {
         modifiers.meta()
     }
