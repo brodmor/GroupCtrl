@@ -1,7 +1,8 @@
 use std::path::PathBuf;
 
-use objc2_app_kit::{NSBitmapImageFileType, NSBitmapImageRep, NSWorkspace};
-use objc2_foundation::{NSDictionary, NSFileManager, NSString};
+use objc2::rc::Retained;
+use objc2_app_kit::{NSBitmapImageFileType, NSBitmapImageRep, NSImage, NSWorkspace};
+use objc2_foundation::{NSData, NSDictionary, NSFileManager, NSString};
 
 use super::app::App;
 use crate::util::capitalize;
@@ -14,7 +15,7 @@ pub fn resolve(bundle_id: &str) -> App {
         .unwrap_or_else(|| heuristic_name(bundle_id));
     let icon_path = app_path
         .as_deref()
-        .and_then(|path| convert_icon(path, bundle_id));
+        .and_then(|path| save_icon(path, bundle_id));
     App::new(bundle_id.to_string(), name, icon_path, app_path)
 }
 
@@ -36,18 +37,27 @@ fn heuristic_name(bundle_id: &str) -> String {
     capitalize(name)
 }
 
-fn convert_icon(app_path: &str, bundle_id: &str) -> Option<PathBuf> {
+fn save_icon(app_path: &str, bundle_id: &str) -> Option<PathBuf> {
     let dir = crate::os::icons_dir();
     let png_path = dir.join(format!("{bundle_id}.png"));
     std::fs::create_dir_all(&dir).ok()?;
     let ns_path = NSString::from_str(app_path);
     let image = NSWorkspace::sharedWorkspace().iconForFile(&ns_path);
-    let tiff_data = image.TIFFRepresentation()?;
-    let rep = NSBitmapImageRep::imageRepWithData(&tiff_data)?;
-    let png_data = unsafe {
-        rep.representationUsingType_properties(NSBitmapImageFileType::PNG, &NSDictionary::new())
-    }?;
-    let bytes = unsafe { png_data.as_bytes_unchecked() };
-    std::fs::write(&png_path, bytes).ok()?;
+    let data = convert_icon(image)?;
+    unsafe { std::fs::write(&png_path, data.as_bytes_unchecked()).ok()? };
     Some(png_path)
+}
+
+fn convert_icon(image: Retained<NSImage>) -> Option<Retained<NSData>> {
+    let tiff = image.TIFFRepresentation()?;
+    let reps = NSBitmapImageRep::imageRepsWithData(&tiff);
+    // Find size closest to 128, preferably larger
+    let rep = reps.into_iter().min_by_key(|rep| {
+        let size = rep.pixelsWide().max(rep.pixelsHigh());
+        if size >= 128 { size } else { isize::MAX - size }
+    })?;
+    unsafe {
+        let rep: Retained<NSBitmapImageRep> = Retained::cast_unchecked(rep);
+        rep.representationUsingType_properties(NSBitmapImageFileType::PNG, &NSDictionary::new())
+    }
 }
