@@ -2,9 +2,10 @@ use std::collections::HashSet;
 use std::hash::Hash;
 
 use dioxus::prelude::*;
-use dioxus_primitives::scroll_area::{ScrollArea, ScrollDirection};
+use dioxus_primitives::scroll_area::ScrollDirection;
 
 use crate::components::label::Label;
+use crate::components::scroll_area::ScrollArea;
 use crate::models::Identifiable;
 use crate::ui::lists::list_menu::ListMenu;
 use crate::ui::lists::list_row::ListRow;
@@ -28,7 +29,7 @@ where
                 class: "sidebar-group !p-2 !pt-1 flex-1 min-h-0",
                 "data-sidebar": "group",
                 div {
-                    class: "sidebar-group-content flex-1 min-h-0",
+                    class: "sidebar-group-content flex flex-col flex-1 min-h-0",
                     "data-sidebar": "group-content",
                     ScrollArea {
                         direction: ScrollDirection::Vertical,

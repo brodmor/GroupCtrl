@@ -1,1 +1,13 @@
-/* Scroll area doesn't require any additional styles */
+/* Override dx-components-theme scrollbar-color which hides scrollbars on macOS */
+*, *:hover {
+    scrollbar-color: unset !important;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--secondary-color-4);
+    border-radius: 3px;
+}
