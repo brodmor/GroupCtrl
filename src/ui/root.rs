@@ -99,9 +99,9 @@ pub fn Root() -> Element {
 }
 
 fn use_config_service() -> Signal<ConfigService> {
-    let config = Arc::new(RwLock::new(Config::load().unwrap_or_default()));
-    let config_reader = ConfigReader::new(config.clone());
-    let action_service = ActionService::new(config_reader);
+    let config = use_hook(|| Arc::new(RwLock::new(Config::load().unwrap_or_default())));
+    let config_reader = use_hook(|| ConfigReader::new(config.clone()));
+    let action_service = use_hook(|| ActionService::new(config_reader.clone()));
 
     let active_recorder = use_context_provider(|| Signal::new(None::<UnboundedSender<Hotkey>>));
     let hotkey_sender = use_listener(Callback::new(move |(hotkey, action)| {
