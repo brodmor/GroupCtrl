@@ -1,3 +1,6 @@
+mod dirs;
+pub use dirs::*;
+
 mod traits;
 pub use traits::*;
 

@@ -1,16 +1,12 @@
 use std::path::PathBuf;
 
 use super::Config;
-use crate::os::{ConfigDir, System};
 
-const PERSISTENCE_DIR_NAME: &str = "groupctrl";
 const CONFIG_FILE_NAME: &str = "config.yaml";
 
 impl Config {
     fn path() -> PathBuf {
-        System::config_dir()
-            .join(PERSISTENCE_DIR_NAME)
-            .join(CONFIG_FILE_NAME)
+        crate::os::config_dir().join(CONFIG_FILE_NAME)
     }
 
     pub fn load() -> anyhow::Result<Self> {
