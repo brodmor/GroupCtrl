@@ -21,15 +21,15 @@ pub fn TargetPicker(
             SelectTrigger {
                 match &target {
                     Some(app) => rsx! { AppLabel { app: app.clone() } },
-                    None => rsx! { span { "(Most Recent)" } },
+                    None => rsx! { span { class: "opacity-50", "Most Recent" } },
                 }
             }
             SelectList {
                 SelectOption::<Option<App>> {
                     value: None::<App>,
-                    text_value: "(Most Recent)".to_string(),
+                    text_value: "Most Recent".to_string(),
                     index: 0usize,
-                    "(Most Recent)"
+                    "Most Recent"
                 }
                 for (i, app) in apps.iter().enumerate() {
                     SelectOption::<Option<App>> {
