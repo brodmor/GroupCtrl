@@ -7,6 +7,6 @@ mod hotkey_conversion;
 mod traits;
 
 pub use action::{Action, Bindable};
-pub use config::Config;
+pub use config::{Config, DuplicateGroupName};
 pub use hotkey::Hotkey;
 pub use traits::Identifiable;

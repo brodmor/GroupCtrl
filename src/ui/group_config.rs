@@ -26,10 +26,10 @@ pub fn GroupConfig(
     });
     let name = use_memo(move || group().name.clone());
     let set_name = Callback::new(move |new_name: String| {
-        if !config_service.write().set_name(group_id, new_name) {
+        if let Err(error) = config_service.write().set_name(group_id, new_name) {
             consume_toast().error(
                 "Duplicate group name".to_string(),
-                ToastOptions::new().description("A group with that name already exists"),
+                ToastOptions::new().description(error.to_string()),
             );
         }
     });

@@ -3,7 +3,7 @@ use std::sync::{Arc, RwLock, RwLockReadGuard, RwLockWriteGuard};
 use dioxus::hooks::UnboundedSender;
 use uuid::Uuid;
 
-use crate::models::{Action, Bindable, Config, Hotkey};
+use crate::models::{Action, Bindable, Config, DuplicateGroupName, Hotkey};
 use crate::os::App;
 use crate::services::HotkeyService;
 use crate::services::config_reader::ConfigReader;
@@ -51,12 +51,10 @@ impl ConfigService {
         self.save();
     }
 
-    pub fn set_name(&mut self, group_id: Uuid, name: String) -> bool {
-        let set = self.config_mut().set_name(group_id, name);
-        if set {
-            self.save();
-        }
-        set
+    pub fn set_name(&mut self, group_id: Uuid, name: String) -> Result<(), DuplicateGroupName> {
+        self.config_mut().set_name(group_id, name)?;
+        self.save();
+        Ok(())
     }
 
     pub fn set_target(&mut self, group_id: Uuid, app: Option<App>) {

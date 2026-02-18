@@ -1,6 +1,11 @@
 use anyhow::Context;
 use serde::{Deserialize, Serialize};
+use thiserror::Error;
 use uuid::Uuid;
+
+#[derive(Error, Debug)]
+#[error("A group with that name already exists")]
+pub struct DuplicateGroupName;
 
 use crate::models::group::Group;
 use crate::models::hotkey::Hotkey;
@@ -53,16 +58,16 @@ impl Config {
             .with_context(|| format!("group {} not found (mut)", group_id))
     }
 
-    pub fn set_name(&mut self, group_id: Uuid, name: String) -> bool {
+    pub fn set_name(&mut self, group_id: Uuid, name: String) -> Result<(), DuplicateGroupName> {
         if self
             .groups
             .iter()
             .any(|g| g.id() != group_id && g.name == name)
         {
-            return false;
+            return Err(DuplicateGroupName);
         }
         self.group_mut(group_id).unwrap().name = name;
-        true
+        Ok(())
     }
 
     pub fn set_hotkey(&mut self, group_id: Uuid, hotkey: Option<Hotkey>) {
