@@ -53,39 +53,31 @@ impl Config {
             .with_context(|| format!("group {} not found (mut)", group_id))
     }
 
-    pub fn set_name(&mut self, group_id: Uuid, name: String) -> anyhow::Result<bool> {
+    pub fn set_name(&mut self, group_id: Uuid, name: String) -> bool {
         if self
             .groups
             .iter()
             .any(|g| g.id() != group_id && g.name == name)
         {
-            return Ok(false);
+            return false;
         }
-        self.group_mut(group_id)?.name = name;
-        Ok(true)
+        self.group_mut(group_id).unwrap().name = name;
+        true
     }
 
-    pub fn set_hotkey(&mut self, group_id: Uuid, hotkey: Option<Hotkey>) -> anyhow::Result<()> {
-        let group = self.group_mut(group_id)?;
-        group.hotkey = hotkey;
-        Ok(())
+    pub fn set_hotkey(&mut self, group_id: Uuid, hotkey: Option<Hotkey>) {
+        self.group_mut(group_id).unwrap().hotkey = hotkey;
     }
 
-    pub fn set_target(&mut self, group_id: Uuid, app: Option<App>) -> anyhow::Result<()> {
-        let group = self.group_mut(group_id)?;
-        group.target = app;
-        Ok(())
+    pub fn set_target(&mut self, group_id: Uuid, app: Option<App>) {
+        self.group_mut(group_id).unwrap().target = app;
     }
 
-    pub fn add_app(&mut self, group_id: Uuid, app: App) -> anyhow::Result<()> {
-        let group = self.group_mut(group_id)?;
-        group.add_app(app);
-        Ok(())
+    pub fn add_app(&mut self, group_id: Uuid, app: App) {
+        self.group_mut(group_id).unwrap().add_app(app);
     }
 
-    pub fn remove_app(&mut self, group_id: Uuid, app_id: String) -> anyhow::Result<()> {
-        let group = self.group_mut(group_id)?;
-        group.remove_app(app_id);
-        Ok(())
+    pub fn remove_app(&mut self, group_id: Uuid, app_id: String) {
+        self.group_mut(group_id).unwrap().remove_app(app_id);
     }
 }
