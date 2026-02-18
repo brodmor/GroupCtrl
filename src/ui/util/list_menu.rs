@@ -31,8 +31,8 @@ where
     rsx! {
         div {
             class: "flex items-center gap-1",
-            SmallButton { onclick: add, Plus {} }
-            SmallButton { onclick: remove, Minus {} }
+            SmallButton { onclick: add, Plus { stroke_width: 4 } }
+            SmallButton { onclick: remove, Minus { stroke_width: 4 } }
         }
     }
 }
