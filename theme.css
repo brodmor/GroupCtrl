@@ -56,10 +56,17 @@ body {
     --secondary-warning-color: var(--od-yellow);
 }
 
-@supports (scrollbar-width: auto) {
-    * {
-        scrollbar-width: thin;
-    }
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--od-light-gray);
+    border-radius: 3px;
 }
 
 .toast[data-type="error"] .toast-title,
