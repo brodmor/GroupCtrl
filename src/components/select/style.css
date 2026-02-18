@@ -4,6 +4,7 @@
 }
 
 .select-trigger {
+    anchor-name: --select-trigger;
     position: relative;
     display: flex;
     box-sizing: border-box;
@@ -66,11 +67,14 @@
 }
 
 .select-list {
-    position: absolute;
+    position: fixed;
+    position-anchor: --select-trigger;
     z-index: 1000;
-    top: 100%;
-    left: 0;
-    min-width: 100%;
+    top: anchor(bottom);
+    left: anchor(left);
+    min-width: anchor-size(width);
+    bottom: 8px;
+    overflow-y: auto;
     box-sizing: border-box;
     padding: 0.25rem;
     border-radius: 0.5rem;
