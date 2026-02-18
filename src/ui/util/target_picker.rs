@@ -21,7 +21,7 @@ pub fn TargetPicker(
             SelectTrigger {
                 match &target {
                     Some(app) => rsx! { AppLabel { app: app.clone() } },
-                    None => rsx! { span { class: "opacity-50", "Most Recent" } },
+                    None => rsx! { span { class: "text-(--muted-text)", "Most Recent" } },
                 }
             }
             SelectList {

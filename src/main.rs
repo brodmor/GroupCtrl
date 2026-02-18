@@ -48,15 +48,17 @@ fn main() {
 
     #[cfg(target_os = "macos")]
     let head = format!(
-        r#"<link rel="stylesheet" href="{}"><link rel="stylesheet" href="{}">"#,
+        r#"<link rel="stylesheet" href="{}"><link rel="stylesheet" href="{}"><link rel="stylesheet" href="{}">"#,
         asset!("/assets/tailwind.css"),
-        asset!("/assets/dx-components-theme.css")
+        asset!("/assets/dx-components-theme.css"),
+        asset!("/theme.css")
     );
     #[cfg(target_os = "windows")]
     let head = format!(
-        r#"<style>{}{}</style>"#,
+        r#"<style>{}{}{}</style>"#,
         include_str!("../assets/tailwind.css"),
-        include_str!("../assets/dx-components-theme.css")
+        include_str!("../assets/dx-components-theme.css"),
+        include_str!("../theme.css")
     );
 
     #[cfg(all(debug_assertions, target_os = "macos"))]
