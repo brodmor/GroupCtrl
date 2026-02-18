@@ -1,4 +1,4 @@
-use global_hotkey::hotkey::Modifiers;
+use global_hotkey::hotkey::{Code, Modifiers};
 
 use crate::os::{KeyboardBehavior, ModifierFormat, System};
 
@@ -27,5 +27,9 @@ impl KeyboardBehavior for System {
 
     fn is_multi_select(modifiers: Modifiers) -> bool {
         modifiers.ctrl()
+    }
+
+    fn show_key(_key: Code) -> Option<String> {
+        None
     }
 }

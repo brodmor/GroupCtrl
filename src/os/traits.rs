@@ -1,6 +1,6 @@
 use std::path::{Path, PathBuf};
 
-use global_hotkey::hotkey::Modifiers;
+use global_hotkey::hotkey::{Code, Modifiers};
 
 use crate::os::App;
 
@@ -11,6 +11,7 @@ pub trait KeyboardBehavior {
     fn gui_modifier_format() -> ModifierFormat;
     fn key_sep() -> &'static str;
     fn is_multi_select(modifiers: Modifiers) -> bool;
+    fn show_key(key: Code) -> Option<String>;
 }
 
 pub trait ConfigDir {

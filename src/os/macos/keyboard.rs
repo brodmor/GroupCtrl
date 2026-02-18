@@ -1,4 +1,4 @@
-use global_hotkey::hotkey::Modifiers;
+use global_hotkey::hotkey::{Code, Modifiers};
 
 use crate::os::{KeyboardBehavior, ModifierFormat, System};
 
@@ -27,5 +27,27 @@ impl KeyboardBehavior for System {
 
     fn is_multi_select(modifiers: Modifiers) -> bool {
         modifiers.meta()
+    }
+
+    fn show_key(key: Code) -> Option<String> {
+        let symbol = match key {
+            Code::Enter => "↩",
+            Code::Backspace => "⌫",
+            Code::Delete => "⌦",
+            Code::Escape => "⎋",
+            Code::Tab => "⇥",
+            Code::Space => "␣",
+            Code::ArrowLeft => "←",
+            Code::ArrowRight => "→",
+            Code::ArrowUp => "↑",
+            Code::ArrowDown => "↓",
+            Code::PageUp => "⇞",
+            Code::PageDown => "⇟",
+            Code::Home => "↖",
+            Code::End => "↘",
+            Code::CapsLock => "⇪",
+            _ => return None,
+        };
+        Some(symbol.to_string())
     }
 }
