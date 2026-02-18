@@ -39,6 +39,9 @@ impl Group {
     }
 
     pub(super) fn add_app(&mut self, app: App) {
+        if self.apps.iter().any(|a| a.id() == app.id()) {
+            return;
+        }
         self.apps.push(app);
     }
 
