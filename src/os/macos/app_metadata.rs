@@ -16,7 +16,7 @@ pub fn resolve(bundle_id: &str) -> App {
     let icon_path = app_path
         .as_deref()
         .and_then(|path| save_icon(path, bundle_id));
-    App::new(bundle_id.to_string(), name, icon_path, app_path)
+    App::new(bundle_id.to_string(), app_path, name, icon_path)
 }
 
 fn resolve_app_path(bundle_id: &str) -> Option<String> {

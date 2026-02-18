@@ -12,24 +12,30 @@ use crate::os::AppMetadata;
 #[serde(into = "String", from = "String")]
 pub struct App {
     pub(super) bundle_id: String,
+    pub(super) app_path: Option<String>,
     name: String,
     icon_path: Option<PathBuf>,
-    pub(super) app_path: Option<String>,
 }
 
 impl App {
     pub(super) fn new(
         bundle_id: String,
+        app_path: Option<String>,
         name: String,
         icon_path: Option<PathBuf>,
-        app_path: Option<String>,
     ) -> Self {
         Self {
             bundle_id,
+            app_path,
             name,
             icon_path,
-            app_path,
         }
+    }
+}
+
+impl Identifiable<String> for App {
+    fn id(&self) -> String {
+        self.bundle_id.clone()
     }
 }
 
@@ -40,12 +46,6 @@ impl AppMetadata for App {
 
     fn icon_path(&self) -> Option<&Path> {
         self.icon_path.as_deref()
-    }
-}
-
-impl Identifiable<String> for App {
-    fn id(&self) -> String {
-        self.bundle_id.clone()
     }
 }
 
