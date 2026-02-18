@@ -6,6 +6,7 @@ use dioxus_primitives::select::{
 
 #[component]
 pub fn Select<T: Clone + PartialEq + 'static>(props: SelectProps<T>) -> Element {
+    use_context_provider(|| Signal::new(format!("--select-{}", uuid::Uuid::new_v4().simple())));
     rsx! {
         document::Link { rel: "stylesheet", href: asset!("./style.css") }
         select::Select {
@@ -26,8 +27,12 @@ pub fn Select<T: Clone + PartialEq + 'static>(props: SelectProps<T>) -> Element 
 
 #[component]
 pub fn SelectTrigger(props: SelectTriggerProps) -> Element {
+    let anchor = use_context::<Signal<String>>();
     rsx! {
-        select::SelectTrigger { class: "select-trigger", attributes: props.attributes,
+        select::SelectTrigger {
+            class: "select-trigger",
+            style: format!("anchor-name: {}", anchor()),
+            attributes: props.attributes,
             {props.children}
             svg {
                 class: "select-expand-icon",
@@ -48,9 +53,11 @@ pub fn SelectValue(props: SelectValueProps) -> Element {
 
 #[component]
 pub fn SelectList(props: SelectListProps) -> Element {
+    let anchor = use_context::<Signal<String>>();
     rsx! {
         select::SelectList {
             class: "select-list",
+            style: format!("position-anchor: {}", anchor()),
             id: props.id,
             attributes: props.attributes,
             {props.children}

@@ -4,7 +4,6 @@
 }
 
 .select-trigger {
-    anchor-name: --select-trigger;
     position: relative;
     display: flex;
     box-sizing: border-box;
@@ -68,7 +67,6 @@
 
 .select-list {
     position: fixed;
-    position-anchor: --select-trigger;
     z-index: 1000;
     top: anchor(bottom);
     left: anchor(left);
