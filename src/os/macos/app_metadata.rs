@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 
+use objc2::AnyThread;
 use objc2::rc::Retained;
 use objc2_app_kit::{NSBitmapImageFileType, NSBitmapImageRep, NSImage, NSWorkspace};
-use objc2_foundation::{NSData, NSDictionary, NSFileManager, NSString};
+use objc2_foundation::{NSData, NSDictionary, NSFileManager, NSPoint, NSRect, NSSize, NSString};
 
 use super::app::App;
 use crate::util::capitalize;
@@ -49,15 +50,10 @@ fn save_icon(app_path: &str, bundle_id: &str) -> Option<PathBuf> {
 }
 
 fn convert_icon(image: Retained<NSImage>) -> Option<Retained<NSData>> {
-    let tiff = image.TIFFRepresentation()?;
-    let reps = NSBitmapImageRep::imageRepsWithData(&tiff);
-    // Find size closest to 128, preferably larger
-    let rep = reps.into_iter().min_by_key(|rep| {
-        let size = rep.pixelsWide().max(rep.pixelsHigh());
-        if size >= 128 { size } else { isize::MAX - size }
-    })?;
+    let mut rect = NSRect::new(NSPoint::new(0.0, 0.0), NSSize::new(128.0, 128.0));
     unsafe {
-        let rep: Retained<NSBitmapImageRep> = Retained::cast_unchecked(rep);
-        rep.representationUsingType_properties(NSBitmapImageFileType::PNG, &NSDictionary::new())
+        let cg_image = image.CGImageForProposedRect_context_hints(&mut rect, None, None)?;
+        NSBitmapImageRep::initWithCGImage(NSBitmapImageRep::alloc(), &cg_image)
+            .representationUsingType_properties(NSBitmapImageFileType::PNG, &NSDictionary::new())
     }
 }
