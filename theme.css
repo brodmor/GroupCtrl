@@ -3,27 +3,35 @@
     --dark: initial;
     --light: ;
 
-    --primary-color-1: #282c34;
-    --primary-color-2: #2c323c;
-    --primary-color-3: #2c323c;
-    --primary-color-4: #3e4452;
-    --primary-color-5: #3e4452;
-    --primary-color-6: #3e4452;
-    --primary-color-7: #5c6370;
+    --od-background: #282c34;
+    --od-surface: #2c323c;
+    --od-highlight: #3e4452;
+    --od-border: #5c6370;
+    --od-text: #abb2bf;
+    --od-accent: #61afef;
+    --od-error: #e06c75;
 
-    --secondary-color-1: #abb2bf;
-    --secondary-color-2: #abb2bf;
-    --secondary-color-3: #abb2bf;
-    --secondary-color-4: #abb2bf;
-    --secondary-color-5: #5c6370;
+    --muted-text: color-mix(in srgb, var(--od-surface) 25%, var(--od-text));
 
-    --muted-text: color-mix(in srgb, var(--secondary-color-5) 50%, var(--secondary-color-4));
+    --primary-color-1: var(--od-background);
+    --primary-color-2: var(--od-surface);
+    --primary-color-3: var(--od-surface);
+    --primary-color-4: var(--od-highlight);
+    --primary-color-5: var(--od-highlight);
+    --primary-color-6: var(--od-highlight);
+    --primary-color-7: var(--od-border);
 
-    --focused-border-color: #61afef;
-    --primary-error-color: #3e4452;
+    --secondary-color-1: var(--od-text);
+    --secondary-color-2: var(--od-text);
+    --secondary-color-3: var(--od-text);
+    --secondary-color-4: var(--od-text);
+    --secondary-color-5: var(--od-border);
+
+    --focused-border-color: var(--od-accent);
+    --primary-error-color: var(--od-highlight);
 }
 
 .toast[data-type="error"] .toast-title,
 .toast[data-type="error"] .toast-description {
-    color: #e06c75;
+    color: var(--od-error);
 }
