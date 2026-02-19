@@ -2,7 +2,6 @@ use std::collections::HashSet;
 
 use dioxus::prelude::*;
 
-use crate::components::label::Label;
 use crate::models::Identifiable;
 use crate::os::App;
 use crate::ui::util::{AppLabel, ListMenu, use_selection};
@@ -16,7 +15,7 @@ pub fn AppList(apps: Vec<App>) -> Element {
             style: "background: var(--sidebar-background); color: var(--sidebar-foreground);",
             div {
                 class: "flex items-center justify-between w-full !p-2 !pb-0",
-                Label { html_for: "app-list", class: "pl-1.5", "Apps" }
+                label { r#for: "app-list", class: "pl-1.5", "Apps" }
                 ListMenu { selected }
             }
             div {

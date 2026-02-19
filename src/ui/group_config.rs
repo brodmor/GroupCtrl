@@ -2,7 +2,6 @@ use dioxus::prelude::*;
 use dioxus_primitives::toast::{ToastOptions, consume_toast};
 use uuid::Uuid;
 
-use crate::components::label::Label;
 use crate::os::{AppSelection, System};
 use crate::services::ConfigService;
 use crate::ui::app_list::AppList;
@@ -66,16 +65,16 @@ pub fn GroupConfig(
             div {
                 class: "text-sm grid items-center gap-2",
                 style: "grid-template-columns: auto minmax(0, 1fr);",
-                Label { html_for: "editable-text", "Name" }
+                label { r#for: "editable-text", "Name" }
                 EditableText {
                     text: name,
                     placeholder: "Group name".to_string(),
                     starting_mode: input_mode(),
                     on_commit: set_name,
                 }
-                Label { html_for: "hotkey-picker", "Hotkey" }
+                label { r#for: "hotkey-picker", "Hotkey" }
                 HotkeyPicker { hotkey: group().hotkey, set_hotkey }
-                Label { html_for: "target-picker", "Target" }
+                label { r#for: "target-picker", "Target" }
                 TargetPicker {
                     apps: group().apps().to_vec(),
                     target: group().target.clone(),

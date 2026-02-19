@@ -5,7 +5,6 @@ use dioxus::desktop::window;
 use dioxus::prelude::*;
 use uuid::Uuid;
 
-use crate::components::label::Label;
 use crate::components::sidebar::*;
 use crate::components::toast::ToastProvider;
 use crate::models::{Config, Hotkey, Identifiable};
@@ -54,7 +53,7 @@ pub fn Root() -> Element {
                         class: "!p-2 !pb-0",
                         div {
                             class: "flex items-center justify-between w-full",
-                            Label { html_for: "group-list", class: "pl-1.5", "Groups" }
+                            label { r#for: "group-list", class: "pl-1.5", "Groups" }
                             ListMenu { selected }
                         }
                     }

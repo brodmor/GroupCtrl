@@ -56,6 +56,14 @@ body {
     --secondary-warning-color: var(--od-yellow);
 }
 
+label {
+    display: flex;
+    align-items: center;
+    color: var(--muted-text);
+    font-size: 0.8rem;
+    line-height: 1;
+}
+
 ::-webkit-scrollbar {
     width: 6px;
 }
