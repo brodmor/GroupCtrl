@@ -53,13 +53,13 @@ pub fn Root() -> Element {
                         class: "!p-2 !pb-0",
                         div {
                             class: "flex items-center justify-between w-full",
-                            label { r#for: "group-list", class: "pl-1.5", "Groups" }
+                            label { r#for: "group-list", class: "pl-1", "Groups" }
                             ListMenu { selected }
                         }
                     }
                     SidebarContent {
-                        SidebarGroup { class: "!p-2 !pt-1 flex-1 min-h-0",
-                            SidebarGroupContent { class: "flex-1 min-h-0 overflow-y-auto",
+                        SidebarGroup { class: "!p-0 flex-1 min-h-0",
+                            SidebarGroupContent { class: "flex-1 min-h-0 overflow-y-auto p-1",
                                 SidebarMenu { id: "group-list",
                                     for group in groups {
                                         GroupMenuItem {

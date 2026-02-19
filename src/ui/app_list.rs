@@ -15,28 +15,21 @@ pub fn AppList(apps: Vec<App>) -> Element {
             style: "background: var(--sidebar-background); color: var(--sidebar-foreground);",
             div {
                 class: "flex items-center justify-between w-full !p-2 !pb-0",
-                label { r#for: "app-list", class: "pl-1.5", "Apps" }
+                label { r#for: "app-list", class: "pl-1", "Apps" }
                 ListMenu { selected }
             }
             div {
-                class: "sidebar-group !p-2 !pt-1 flex-1 min-h-0",
-                "data-sidebar": "group",
-                div {
-                    class: "sidebar-group-content flex flex-col flex-1 min-h-0",
-                    "data-sidebar": "group-content",
-                    div {
-                        class: "flex-1 min-h-0 overflow-y-auto",
-                        ul {
-                            id: "app-list",
-                            class: "sidebar-menu",
-                            "data-sidebar": "menu",
-                            for app in apps {
-                                li {
-                                    class: "sidebar-menu-item",
-                                    "data-sidebar": "menu-item",
-                                    AppRow { app, selected }
-                                }
-                            }
+                class: "sidebar-group-content flex-1 min-h-0 overflow-y-auto p-1",
+                "data-sidebar": "group-content",
+                ul {
+                    id: "app-list",
+                    class: "sidebar-menu",
+                    "data-sidebar": "menu",
+                    for app in apps {
+                        li {
+                            class: "sidebar-menu-item",
+                            "data-sidebar": "menu-item",
+                            AppRow { app, selected }
                         }
                     }
                 }
