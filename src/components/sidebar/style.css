@@ -15,7 +15,8 @@
     --sidebar-background: var(--primary-color-2);
     --sidebar-foreground: var(--secondary-color-4);
     --sidebar-border: var(--primary-color-6);
-    --sidebar-accent: var(--primary-color-4);
+    --sidebar-hover: var(--primary-color-4);
+    --sidebar-accent: var(--primary-color-5);
     --sidebar-accent-foreground: var(--secondary-color-4);
     --sidebar-ring: var(--primary-color-7);
 }
@@ -379,7 +380,7 @@
 }
 
 .sidebar-group-action:hover {
-    background: var(--sidebar-accent);
+    background: var(--sidebar-hover);
     color: var(--sidebar-accent-foreground);
 }
 
@@ -449,7 +450,7 @@
 }
 
 .sidebar-menu-button[data-sidebar="menu-button"]:hover {
-    background: var(--sidebar-accent);
+    background: var(--sidebar-hover);
     color: var(--sidebar-accent-foreground);
 }
 
@@ -457,10 +458,6 @@
     box-shadow: 0 0 0 2px var(--sidebar-ring);
 }
 
-.sidebar-menu-button[data-sidebar="menu-button"]:active {
-    background: var(--sidebar-accent);
-    color: var(--sidebar-accent-foreground);
-}
 
 .sidebar-menu-button[data-sidebar="menu-button"]:disabled,
 .sidebar-menu-button[data-sidebar="menu-button"][aria-disabled="true"] {
@@ -468,10 +465,10 @@
     pointer-events: none;
 }
 
-.sidebar-menu-button[data-sidebar="menu-button"][data-active="true"] {
+.sidebar-menu-button[data-sidebar="menu-button"][data-active="true"],
+.sidebar-menu-button[data-sidebar="menu-button"][data-active="true"]:hover {
     background: var(--sidebar-accent);
     color: var(--sidebar-accent-foreground);
-    font-weight: 500;
 }
 
 .sidebar-menu-button[data-sidebar="menu-button"] svg {
@@ -517,8 +514,8 @@
 }
 
 .sidebar-menu-button[data-sidebar="menu-button"][data-variant="outline"]:hover {
-    background: var(--sidebar-accent);
-    box-shadow: 0 0 0 1px var(--sidebar-accent);
+    background: var(--sidebar-hover);
+    box-shadow: 0 0 0 1px var(--sidebar-hover);
 }
 
 .sidebar-desktop[data-collapsible="icon"] .sidebar-menu-button[data-sidebar="menu-button"] {
@@ -578,7 +575,7 @@
 }
 
 .sidebar-menu-action[data-sidebar="menu-action"]:hover {
-    background: var(--sidebar-accent);
+    background: var(--sidebar-hover);
     color: var(--sidebar-accent-foreground);
 }
 
@@ -749,7 +746,7 @@
 }
 
 .sidebar-menu-sub-button:hover {
-    background: var(--sidebar-accent);
+    background: var(--sidebar-hover);
     color: var(--sidebar-accent-foreground);
 }
 

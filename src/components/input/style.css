@@ -29,8 +29,13 @@
     cursor: not-allowed;
 }
 
-.input:hover:not(:disabled),
-.input:focus-visible {
+.input:hover:not(:disabled) {
+    background-color: var(--primary-color-4);
+    color: var(--secondary-color-1);
+    outline: none;
+}
+
+.input:focus-visible:not(:disabled) {
     background-color: var(--primary-color-5);
     color: var(--secondary-color-1);
     outline: none;

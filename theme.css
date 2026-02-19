@@ -29,7 +29,7 @@ body {
     --primary-color-1: var(--od-black);
     --primary-color-2: var(--od-dark-gray);
     --primary-color-3: var(--od-dark-gray);
-    --primary-color-4: var(--od-gray);
+    --primary-color-4: color-mix(in srgb, var(--od-dark-gray) 40%, var(--od-gray));
     --primary-color-5: var(--od-gray);
     --primary-color-6: var(--od-gray);
     --primary-color-7: var(--od-light-gray);

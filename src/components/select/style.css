@@ -60,7 +60,7 @@
 
 .select-trigger:hover:not([data-disabled="true"]),
 .select-trigger:focus-visible {
-    background-color: var(--primary-color-5);
+    background-color: var(--primary-color-4);
     color: var(--secondary-color-1);
     outline: none;
 }
@@ -138,7 +138,7 @@
 
 .select-option:hover:not([data-disabled="true"]),
 .select-option:focus-visible {
-    background: var(--light, var(--primary-color-4)) var(--dark, var(--primary-color-4));
+    background: var(--light, var(--primary-color-5)) var(--dark, var(--primary-color-5));
     color: var(--secondary-color-1);
     outline: none;
 }

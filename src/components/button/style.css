@@ -3,7 +3,7 @@
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
-    transition: background-color 0.2s ease, color 0.2s ease;
+
 }
 
 .button:focus-visible {
@@ -34,7 +34,7 @@
 }
 
 .button[data-style="ghost"]:hover {
-    background-color: var(--primary-color-5);
+    background-color: var(--primary-color-4);
     color: var(--secondary-color-1);
 }
 
@@ -46,7 +46,7 @@
 }
 
 .button[data-style="outline"]:hover {
-    background-color: var(--primary-color-5);
+    background-color: var(--primary-color-4);
     color: var(--secondary-color-1);
 }
 
