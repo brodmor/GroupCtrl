@@ -15,7 +15,6 @@ use crate::ui::util::{ListMenu, ListOperation, use_listener, use_selection};
 
 #[component]
 pub fn Root() -> Element {
-    use_effect(move || window().set_decorations(true));
     #[cfg(all(debug_assertions, target_os = "macos"))]
     use_effect(move || {
         if let Some(id) = crate::PREVIOUS_APP.get() {
@@ -42,13 +41,13 @@ pub fn Root() -> Element {
 
     rsx! {
         div {
+            onmounted: move |_| window().set_decorations(true),
             ToastProvider {
             SidebarProvider {
                 Sidebar {
                     side: SidebarSide::Left,
                     variant: SidebarVariant::Sidebar,
                     collapsible: SidebarCollapsible::None,
-
                     SidebarHeader {
                         class: "!p-2 !pb-0",
                         div {

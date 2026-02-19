@@ -66,6 +66,7 @@ fn main() {
 
     let window = {
         let builder = WindowBuilder::new()
+            .with_transparent(true)
             .with_decorations(false)
             .with_inner_size(LogicalSize::new(500, 400))
             .with_min_inner_size(LogicalSize::new(400, 400))
