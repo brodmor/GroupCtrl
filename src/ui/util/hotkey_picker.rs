@@ -22,7 +22,7 @@ pub fn HotkeyPicker(mut hotkey: Option<Hotkey>, set_hotkey: Callback<Option<Hotk
 
     let label = if recording() {
         rsx! {
-            span { class: "text-(--muted-text)", "Recording..." }
+            span { "Recording..." }
         }
     } else {
         match hotkey {
