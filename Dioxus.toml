@@ -1,3 +1,7 @@
 [application]
 name = "GroupCtrl"
 default_platform = "desktop"
+
+[bundle]
+identifier = "dev.brodmo.groupctrl"
+publisher = "Moritz Brödel"
