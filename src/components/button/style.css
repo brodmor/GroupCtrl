@@ -58,3 +58,10 @@
 .button[data-style="destructive"]:hover {
     background-color: var(--secondary-error-color);
 }
+
+.button:disabled {
+    background-color: var(--primary-color-4);
+    color: var(--primary-color-7);
+    cursor: default;
+    pointer-events: none;
+}

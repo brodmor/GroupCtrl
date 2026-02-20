@@ -31,19 +31,20 @@ where
     rsx! {
         div {
             class: "flex items-center gap-1",
-            SmallButton { onclick: add, Plus { stroke_width: 4 } }
-            SmallButton { onclick: remove, Minus { stroke_width: 4 } }
+            SmallButton { onclick: add, disabled: false, Plus { stroke_width: 4 } }
+            SmallButton { onclick: remove, disabled: selected().is_empty(), Minus { stroke_width: 4 } }
         }
     }
 }
 
 #[component]
-fn SmallButton(onclick: EventHandler<MouseEvent>, children: Element) -> Element {
+fn SmallButton(onclick: EventHandler<MouseEvent>, disabled: bool, children: Element) -> Element {
     rsx! {
         Button {
             variant: ButtonVariant::Secondary,
             class: "!p-0 size-6 grid place-items-center [&>svg]:size-3",
-            onclick: move |e| onclick.call(e),
+            onclick,
+            disabled,
             {children}
         }
     }
