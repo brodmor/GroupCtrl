@@ -65,16 +65,20 @@ fn main() {
     }
 
     let window = {
+        let max_size = if cfg!(debug_assertions) {
+            LogicalSize::new(1200, 800)
+        } else {
+            LogicalSize::new(600, 600)
+        };
         let builder = WindowBuilder::new()
             .with_transparent(true)
             .with_decorations(false)
             .with_inner_size(LogicalSize::new(500, 400))
             .with_min_inner_size(LogicalSize::new(400, 400))
-            .with_max_inner_size(LogicalSize::new(600, 600))
-            .with_title("GroupCtrl");
+            .with_max_inner_size(max_size);
         #[cfg(debug_assertions)] // for hot reload
         let builder = builder.with_always_on_top(true).with_focused(false);
-        builder
+        builder.with_title("GroupCtrl")
     };
 
     LaunchBuilder::desktop()
