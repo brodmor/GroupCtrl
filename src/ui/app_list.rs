@@ -15,7 +15,7 @@ pub fn AppList(apps: Vec<App>) -> Element {
             style: "background: var(--sidebar-background); color: var(--sidebar-foreground);",
             div {
                 class: "flex items-center justify-between w-full !p-2 !pb-0",
-                label { r#for: "app-list", class: "pl-1.5", "Apps" }
+                label { r#for: "app-list", class: "pl-1.25", "Apps" }
                 ListMenu { selected }
             }
             div {
