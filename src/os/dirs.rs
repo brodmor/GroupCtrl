@@ -9,8 +9,15 @@ pub fn config_dir() -> PathBuf {
 }
 
 pub fn icons_dir() -> PathBuf {
+    data_local_dir().join("icons")
+}
+
+pub fn logs_dir() -> PathBuf {
+    data_local_dir().join("logs")
+}
+
+fn data_local_dir() -> PathBuf {
     dirs::data_local_dir()
         .expect("could not determine data local directory")
         .join(APP_NAME)
-        .join("icons")
 }

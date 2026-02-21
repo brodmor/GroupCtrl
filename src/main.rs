@@ -19,8 +19,8 @@ const FONT_URL: &str = "https://fonts.googleapis.com/css2?family=Inter:ital,opsz
 pub static PREVIOUS_APP: std::sync::OnceLock<String> = std::sync::OnceLock::new();
 
 fn setup_logging() -> anyhow::Result<()> {
-    std::fs::create_dir_all("logs")?;
-    let log_file = std::fs::File::create("logs/app.log")?;
+    std::fs::create_dir_all(os::logs_dir())?;
+    let log_file = std::fs::File::create(os::logs_dir().join("app.log"))?;
     let config = ConfigBuilder::new().build();
     CombinedLogger::init(vec![
         TermLogger::new(
@@ -37,14 +37,12 @@ fn setup_logging() -> anyhow::Result<()> {
 fn main() {
     setup_logging().expect("Logging setup failed");
 
-    let icons_dir = crate::os::icons_dir();
-    if icons_dir.exists() {
-        let _ = std::fs::remove_dir_all(&icons_dir);
+    if os::icons_dir().exists() {
+        let _ = std::fs::remove_dir_all(os::icons_dir());
     }
 
-    #[cfg(debug_assertions)] // Make panics crash loudly
     std::panic::set_hook(Box::new(|panic_info| {
-        eprintln!("PANIC: {}", panic_info);
+        log::error!("PANIC: {}", panic_info);
         std::process::exit(1);
     }));
 
